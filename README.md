@@ -47,11 +47,26 @@ it opens normally with no Gatekeeper warning.
   to fix recurring mis‑hears.
 - **No account, no subscription.**
 
-## Requirements
+## System requirements
 
-- macOS 14 (Sonoma) or later, Apple Silicon
-- ~1.5 GB disk for the local model (downloaded once on first use)
-- *(Optional)* [Ollama](https://ollama.com) for filler‑word/punctuation cleanup
+**Required**
+
+- **Apple Silicon Mac (M1 or newer).** Intel Macs are not supported — on‑device
+  transcription runs on the Apple Neural Engine / Metal via WhisperKit.
+- **macOS 14 (Sonoma) or later.**
+- **~2 GB free disk** — the local Whisper model is downloaded once on first use
+  (~1.5 GB) and cached for offline use afterward.
+- Internet access on first launch to download the model; fully offline after that.
+
+**Recommended**
+
+- **16 GB unified memory** for a comfortable experience, especially if you also
+  run the optional Ollama cleanup. Dictation alone works on 8 GB.
+
+**Optional**
+
+- [Ollama](https://ollama.com) running `qwen2.5:7b-instruct` for filler‑word and
+  punctuation cleanup. Without it you still get the raw local transcription.
 
 ## Install
 
@@ -59,6 +74,27 @@ it opens normally with no Gatekeeper warning.
 2. Grant **Microphone** and **Accessibility** when prompted (Accessibility is what
    lets OfflineVoice paste into other apps).
 3. Hold **Right Option**, speak, release.
+
+## FAQ
+
+**Does it run on Intel Macs?**
+No. OfflineVoice requires an Apple Silicon Mac (M1 or newer). Transcription runs
+on the Apple Neural Engine, which Intel Macs don't have.
+
+**Does it need the internet?**
+Only once, to download the local model on first launch. After that the core
+dictation loop runs fully offline.
+
+**Is the download safe to open?**
+Yes — it's signed with an Apple Developer ID and notarized by Apple, so it opens
+with no Gatekeeper warning. Only download from the official channels above.
+
+**Do I need Ollama?**
+No. Ollama is optional and only used to clean up filler words and punctuation.
+Without it you still get the raw local transcription.
+
+**Which languages does it handle?**
+Chinese, English, and mixed Chinese‑English dictation.
 
 ## Privacy
 

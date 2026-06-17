@@ -37,8 +37,11 @@ entirely on your Mac. No account, no subscription, no cloud upload.
 
 ## Requirements
 
-- macOS 14 (Sonoma) or later, Apple Silicon.
-- ~1.5 GB disk for the local Whisper model (downloaded once on first use).
+- **Apple Silicon Mac (M1 or newer)** — Intel Macs are not supported.
+- **macOS 14 (Sonoma) or later.**
+- **~2 GB free disk** — the local Whisper model is downloaded once on first use
+  (~1.5 GB) and cached for offline use afterward.
+- *Recommended:* 16 GB unified memory (8 GB works for dictation alone).
 - *(Optional)* [Ollama](https://ollama.com) running `qwen2.5:7b-instruct` for
   filler-word/punctuation cleanup. Without it, you get the raw local transcription.
 
