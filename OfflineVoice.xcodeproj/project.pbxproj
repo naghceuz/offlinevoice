@@ -16,7 +16,9 @@
 		1DF8AA8E15210E8941476494 /* ASREngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C457CCEC3A1322942439122F /* ASREngine.swift */; };
 		1E1EB14116CC372CE7A4C5C5 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D5185F2E58A3DD3B65F17A /* Pipeline.swift */; };
 		212EDAC61CA07EB9A0071EA2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 361FE3296A79CE8FB0456A2F /* AppState.swift */; };
+		29B4FD5CF015793EEC983FD4 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */; };
 		2CD07D7F4C65379AE5E1572D /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD40138CB186054732C1952 /* WaveformView.swift */; };
+		301D2615BDCB591C869E2972 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */; };
 		3E585BC3DCCC60ADC9CB9FBF /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC72ED91463EACB807C4D61 /* Config.swift */; };
 		4BF01CCA4C410697C3855123 /* DictationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882F802C063083AC7326A732 /* DictationViewModel.swift */; };
 		4DC73CA1A4EE33156AC101F9 /* zh_tech.wav in Resources */ = {isa = PBXBuildFile; fileRef = 12AF210449E2B6238AEDB5CB /* zh_tech.wav */; };
@@ -24,6 +26,7 @@
 		5AD803971E70024659DBC7C1 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = A833C79CAFD286AE3BAE8CD8 /* WhisperKit */; };
 		5B6E69164019DA30607749E4 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6874B77ACDF0C6CC8F33F8F7 /* AudioRecorder.swift */; };
 		61A1E6E9238C1C25EA723AAE /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A6C32D751775A6EE72AFFF /* Benchmark.swift */; };
+		62D214E7A4D89AFA1C574883 /* OfflineVoiceKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3575F8B1DB85AD20D5FDACA3 /* OfflineVoiceKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		66E0119D9A454EEB6A6A7949 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D9696D495EF8C019FFE487 /* AppDelegate.swift */; };
 		74CC0BAAA11FFD2E3E5C256C /* IndicatorWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026D6215DE2016A73F83CA5 /* IndicatorWindow.swift */; };
 		7B237A69698E5A5BF9A68251 /* references.json in Resources */ = {isa = PBXBuildFile; fileRef = 18FCA8FDFAE9556F9C7D2F27 /* references.json */; };
@@ -37,11 +40,37 @@
 		B8AA16C6467C968C3934B962 /* SenseVoiceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71E9D9AAF26C11A96B2F83FE /* SenseVoiceEngine.swift */; };
 		C5C41F991C0F6174455967C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD23266579A5E70C6431432A /* Assets.xcassets */; };
 		CEC6EF85EF8FC1D126FB26C8 /* HotkeyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB04ABE1871BE9647128CE0 /* HotkeyMonitor.swift */; };
+		D06DDA1C147ACF05A45FF06D /* RoundTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9314DE867D53B5B0A0ECFF /* RoundTripView.swift */; };
+		D1C475BB9BABF72688D52713 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 450AB050A0EB25FC3475B214 /* KeyboardViewController.swift */; };
 		D5C861FB1E52187E79735E78 /* OfflineVoiceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE05740A66882396E1C8F72 /* OfflineVoiceApp.swift */; };
 		D9E509F5A76D5B475CB95737 /* AppleSpeechEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FEE016860D156004895A253 /* AppleSpeechEngine.swift */; };
 		F0C89E50E3C140FDEB15A5F2 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6874B77ACDF0C6CC8F33F8F7 /* AudioRecorder.swift */; };
 		F6267F58AFB3CFEFC936EFC4 /* AppleSpeechEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FEE016860D156004895A253 /* AppleSpeechEngine.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3DA6F20F4E945951E4FB2098 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 317866190E343560FD8A1459 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22AB643FEBA0A0FEBB1AC0B5;
+			remoteInfo = OfflineVoiceKeyboard;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		584632DE2DBDDED4E478656E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				62D214E7A4D89AFA1C574883 /* OfflineVoiceKeyboard.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		05A6C32D751775A6EE72AFFF /* Benchmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Benchmark.swift; sourceTree = "<group>"; };
@@ -50,10 +79,12 @@
 		18FCA8FDFAE9556F9C7D2F27 /* references.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = references.json; sourceTree = "<group>"; };
 		2FE05740A66882396E1C8F72 /* OfflineVoiceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineVoiceApp.swift; sourceTree = "<group>"; };
 		340E4EB3CE9D394D2719B949 /* DictationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationView.swift; sourceTree = "<group>"; };
+		3575F8B1DB85AD20D5FDACA3 /* OfflineVoiceKeyboard.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = OfflineVoiceKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		361FE3296A79CE8FB0456A2F /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		390DB7EE1C9765472AC848AD /* ShortcutRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderView.swift; sourceTree = "<group>"; };
 		3FEE016860D156004895A253 /* AppleSpeechEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSpeechEngine.swift; sourceTree = "<group>"; };
 		425BFA722F5A6DEF66291665 /* Paster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paster.swift; sourceTree = "<group>"; };
+		450AB050A0EB25FC3475B214 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		5EC72ED91463EACB807C4D61 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		6026D6215DE2016A73F83CA5 /* IndicatorWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorWindow.swift; sourceTree = "<group>"; };
 		680A90EA956B09AB5319F603 /* zh_meeting.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = zh_meeting.wav; sourceTree = "<group>"; };
@@ -67,6 +98,7 @@
 		8BD40138CB186054732C1952 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
 		8ECB249B2B30B6433615201F /* WhisperKitEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperKitEngine.swift; sourceTree = "<group>"; };
 		A17D5DACF29C4085EA0AFB53 /* en_meeting.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = en_meeting.wav; sourceTree = "<group>"; };
+		AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
 		AE93D26C8FAB87F3F3B2BB6D /* OfflineVoice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineVoice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6250E7FFF8CDC50868671AB /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		B7D9696D495EF8C019FFE487 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -74,6 +106,7 @@
 		CBA7FD396FFBA61CDA0C32D8 /* OfflineVoiceiOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = OfflineVoiceiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4D5185F2E58A3DD3B65F17A /* Pipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pipeline.swift; sourceTree = "<group>"; };
 		ECC78C98676C2B9D25949568 /* MainAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppView.swift; sourceTree = "<group>"; };
+		EF9314DE867D53B5B0A0ECFF /* RoundTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundTripView.swift; sourceTree = "<group>"; };
 		FD23266579A5E70C6431432A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -89,11 +122,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3FD4899AFD17F105BDB8BE5C /* Keyboard */ = {
+			isa = PBXGroup;
+			children = (
+				450AB050A0EB25FC3475B214 /* KeyboardViewController.swift */,
+			);
+			path = Keyboard;
+			sourceTree = "<group>";
+		};
 		4A0218E0E9BA0DDD16F51DCC /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				AE93D26C8FAB87F3F3B2BB6D /* OfflineVoice.app */,
 				CBA7FD396FFBA61CDA0C32D8 /* OfflineVoiceiOS.app */,
+				3575F8B1DB85AD20D5FDACA3 /* OfflineVoiceKeyboard.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -139,6 +181,7 @@
 				340E4EB3CE9D394D2719B949 /* DictationView.swift */,
 				882F802C063083AC7326A732 /* DictationViewModel.swift */,
 				2FE05740A66882396E1C8F72 /* OfflineVoiceApp.swift */,
+				EF9314DE867D53B5B0A0ECFF /* RoundTripView.swift */,
 				8BD40138CB186054732C1952 /* WaveformView.swift */,
 			);
 			path = iOSApp;
@@ -157,10 +200,20 @@
 			isa = PBXGroup;
 			children = (
 				706A8613F43AF07F296AE58F /* iOSApp */,
+				3FD4899AFD17F105BDB8BE5C /* Keyboard */,
 				8688382DCFCB9EEA8EFB2EA7 /* Resources */,
+				A999912C19382E9185281F4C /* Shared */,
 				51791178EF2ECEB121904BBB /* Sources */,
 				4A0218E0E9BA0DDD16F51DCC /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		A999912C19382E9185281F4C /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 		B75533DC16DCF5D5EF639E13 /* ASR */ = {
@@ -185,15 +238,34 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		22AB643FEBA0A0FEBB1AC0B5 /* OfflineVoiceKeyboard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2310C9A430665FBD7E27E2CA /* Build configuration list for PBXNativeTarget "OfflineVoiceKeyboard" */;
+			buildPhases = (
+				EC008F2689AA02BC1D495947 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OfflineVoiceKeyboard;
+			packageProductDependencies = (
+			);
+			productName = OfflineVoiceKeyboard;
+			productReference = 3575F8B1DB85AD20D5FDACA3 /* OfflineVoiceKeyboard.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		466394DC661AB8F5FFCDCF00 /* OfflineVoiceiOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4BDDAA5BE7190C6F524E6475 /* Build configuration list for PBXNativeTarget "OfflineVoiceiOS" */;
 			buildPhases = (
 				54050BCBDE138DBCD933BFD0 /* Sources */,
+				584632DE2DBDDED4E478656E /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7E2275D78EC61503CB7B2E6F /* PBXTargetDependency */,
 			);
 			name = OfflineVoiceiOS;
 			packageProductDependencies = (
@@ -231,6 +303,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					22AB643FEBA0A0FEBB1AC0B5 = {
+						DevelopmentTeam = H6E9M3Z7YM;
+						ProvisioningStyle = Automatic;
+					};
 					466394DC661AB8F5FFCDCF00 = {
 						DevelopmentTeam = H6E9M3Z7YM;
 						ProvisioningStyle = Automatic;
@@ -258,6 +334,7 @@
 			projectRoot = "";
 			targets = (
 				95D80EE406309BCA172A441F /* OfflineVoice */,
+				22AB643FEBA0A0FEBB1AC0B5 /* OfflineVoiceKeyboard */,
 				466394DC661AB8F5FFCDCF00 /* OfflineVoiceiOS */,
 			);
 		};
@@ -291,6 +368,8 @@
 				4BF01CCA4C410697C3855123 /* DictationViewModel.swift in Sources */,
 				0B1BE62AE360E11CFD32FCD8 /* Log.swift in Sources */,
 				D5C861FB1E52187E79735E78 /* OfflineVoiceApp.swift in Sources */,
+				D06DDA1C147ACF05A45FF06D /* RoundTripView.swift in Sources */,
+				29B4FD5CF015793EEC983FD4 /* SharedStore.swift in Sources */,
 				2CD07D7F4C65379AE5E1572D /* WaveformView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -321,7 +400,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EC008F2689AA02BC1D495947 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1C475BB9BABF72688D52713 /* KeyboardViewController.swift in Sources */,
+				301D2615BDCB591C869E2972 /* SharedStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7E2275D78EC61503CB7B2E6F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22AB643FEBA0A0FEBB1AC0B5 /* OfflineVoiceKeyboard */;
+			targetProxy = 3DA6F20F4E945951E4FB2098 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		11DCACE103B70CC374643D3D /* Debug */ = {
@@ -415,6 +511,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/OfflineVoiceiOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -427,6 +524,28 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oz.offlinevoice.ios;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		3C9B89A849651DB68D684ED2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Resources/OfflineVoiceKeyboard.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H6E9M3Z7YM;
+				INFOPLIST_FILE = "Resources/Info-Keyboard.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oz.offlinevoice.ios.keyboard;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.10;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -493,6 +612,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/OfflineVoiceiOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -535,6 +655,28 @@
 			};
 			name = Debug;
 		};
+		C5EC001063118C53E4130FDB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Resources/OfflineVoiceKeyboard.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H6E9M3Z7YM;
+				INFOPLIST_FILE = "Resources/Info-Keyboard.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oz.offlinevoice.ios.keyboard;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -543,6 +685,15 @@
 			buildConfigurations = (
 				11DCACE103B70CC374643D3D /* Debug */,
 				9A57A4E0766E0B8CE2427E1B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2310C9A430665FBD7E27E2CA /* Build configuration list for PBXNativeTarget "OfflineVoiceKeyboard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C5EC001063118C53E4130FDB /* Debug */,
+				3C9B89A849651DB68D684ED2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

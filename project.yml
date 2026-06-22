@@ -57,10 +57,19 @@ targets:
     platform: iOS
     sources:
       - path: iOSApp
+      - path: Shared/SharedStore.swift
       - path: Sources/ASR/ASREngine.swift
       - path: Sources/ASR/AppleSpeechEngine.swift
       - path: Sources/AudioRecorder.swift
       - path: Sources/Log.swift
+    dependencies:
+      # Embed the keyboard extension inside the app bundle.
+      - target: OfflineVoiceKeyboard
+    entitlements:
+      path: Resources/OfflineVoiceiOS.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.oz.offlinevoice
     info:
       path: Resources/Info-iOS.plist
       properties:
@@ -72,6 +81,10 @@ targets:
         NSSpeechRecognitionUsageDescription: "OfflineVoice 用苹果原生本地语音识别把你的话转成文字，全程在本机进行。"
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+        CFBundleURLTypes:
+          - CFBundleURLName: com.oz.offlinevoice
+            CFBundleURLSchemes:
+              - offlinevoice
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.oz.offlinevoice.ios
@@ -83,5 +96,43 @@ targets:
         # Automatic signing with the user's known team (same as AstroMatch) so a
         # real-device build works without touching the Signing UI. Simulator
         # builds don't need signing either way.
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: H6E9M3Z7YM
+
+  # Keyboard extension. iOS bans keyboards from the microphone, so this never
+  # records: the mic button launches the container app (round-trip), which
+  # records on-device and writes text to the App Group for the keyboard to
+  # insert. RequestsOpenAccess is required to launch the app + share the group.
+  OfflineVoiceKeyboard:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Keyboard
+      - path: Shared/SharedStore.swift
+    entitlements:
+      path: Resources/OfflineVoiceKeyboard.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.oz.offlinevoice
+    info:
+      path: Resources/Info-Keyboard.plist
+      properties:
+        CFBundleDisplayName: OfflineVoice
+        NSExtension:
+          NSExtensionAttributes:
+            IsASCIICapable: false
+            PrimaryLanguage: zh-Hans
+            PrefersRightToLeft: false
+            RequestsOpenAccess: true
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.oz.offlinevoice.ios.keyboard
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.10"
+        IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+        TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: H6E9M3Z7YM

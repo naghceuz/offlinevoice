@@ -24,9 +24,19 @@ final class DictationViewModel: ObservableObject {
     @Published var transcript: String = ""
     /// Toast-style status line under the result (permissions, empty captures…).
     @Published var notice: String?
+    /// In round-trip mode, the final text that was handed to the keyboard.
+    @Published var roundTripResult: String?
+
+    /// When true this VM is driving the keyboard round-trip: it auto-records and,
+    /// on success, writes the text to the App Group for the keyboard to insert.
+    let roundTripMode: Bool
 
     private let recorder = AudioRecorder()
     private let engine: ASREngine = AppleSpeechEngine(locale: Locale(identifier: "zh-CN"))
+
+    init(roundTrip: Bool = false) {
+        self.roundTripMode = roundTrip
+    }
 
     var isRecording: Bool { phase == .recording }
     var isBusy: Bool { phase == .recording || phase == .transcribing }
@@ -72,6 +82,11 @@ final class DictationViewModel: ObservableObject {
                 await MainActor.run {
                     if text.isEmpty {
                         self.notice = "没听清，再说一次试试。"
+                    } else if self.roundTripMode {
+                        // Hand off to the keyboard via the App Group, and keep a
+                        // copy on screen so nothing is ever silently lost.
+                        SharedStore.setPending(text, at: Date().timeIntervalSince1970)
+                        self.roundTripResult = text
                     } else {
                         self.transcript = self.transcript.isEmpty ? text : self.transcript + " " + text
                     }
@@ -89,6 +104,13 @@ final class DictationViewModel: ObservableObject {
         transcript = ""
         notice = nil
         if isErrorPhase { phase = .idle }
+    }
+
+    // MARK: - Round-trip (keyboard) control
+
+    /// Tap-to-toggle recording for the round-trip screen (no press-and-hold).
+    func toggleRoundTripRecording() {
+        if isRecording { stopAndTranscribe() } else { startRecording() }
     }
 
     private var isErrorPhase: Bool {
