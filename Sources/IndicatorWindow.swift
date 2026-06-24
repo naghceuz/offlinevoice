@@ -117,7 +117,7 @@ private final class BarsView: NSView {
         let totalWidth = CGFloat(barCount) * barWidth + CGFloat(barCount - 1) * gap
         var x = bounds.midX - totalWidth / 2
         let cy = bounds.midY
-        NSColor.white.setFill()
+        NSColor(red: 1.0, green: 0.82, blue: 0.12, alpha: 1.0).setFill()
         for i in 0..<barCount {
             let amplitude = abs(sin(phase + CGFloat(i) * 0.7))
             let height = 7 + 15 * amplitude
