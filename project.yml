@@ -43,10 +43,23 @@ targets:
         MACOSX_DEPLOYMENT_TARGET: "13.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_HARDENED_RUNTIME: NO
-        CODE_SIGN_STYLE: Manual
-        CODE_SIGN_IDENTITY: "-"
-        CODE_SIGNING_REQUIRED: NO
-        CODE_SIGNING_ALLOWED: NO
+      configs:
+        # Debug builds get a stable Apple Development signature so macOS TCC
+        # (Accessibility / Input Monitoring) grants survive rebuilds — an ad-hoc
+        # ("-") signature changes cdhash every build and the grant evaporates.
+        Debug:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: "Apple Development"
+          DEVELOPMENT_TEAM: H6E9M3Z7YM
+          CODE_SIGNING_REQUIRED: YES
+          CODE_SIGNING_ALLOWED: YES
+        # Release stays unsigned here; scripts/package-mac.sh re-signs with the
+        # Developer ID identity + Hardened Runtime after the build.
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: "-"
+          CODE_SIGNING_REQUIRED: NO
+          CODE_SIGNING_ALLOWED: NO
 
   # iOS host app. Reuses the platform-agnostic core (ASR protocol, Apple-native
   # engine, audio capture, logger) by referencing those files directly — they
@@ -65,11 +78,6 @@ targets:
     dependencies:
       # Embed the keyboard extension inside the app bundle.
       - target: OfflineVoiceKeyboard
-    entitlements:
-      path: Resources/OfflineVoiceiOS.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.com.oz.offlinevoice
     info:
       path: Resources/Info-iOS.plist
       properties:
@@ -109,11 +117,6 @@ targets:
     sources:
       - path: Keyboard
       - path: Shared/SharedStore.swift
-    entitlements:
-      path: Resources/OfflineVoiceKeyboard.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.com.oz.offlinevoice
     info:
       path: Resources/Info-Keyboard.plist
       properties:

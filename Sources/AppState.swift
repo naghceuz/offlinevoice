@@ -10,6 +10,9 @@ final class AppState: ObservableObject {
     @Published var modelError: String?
     /// True after a dictation couldn't be auto-pasted for lack of Accessibility.
     @Published var pasteBlockedByAccessibility = false
+    /// Set when a recording came through near-silent — the input device is likely
+    /// wrong or busy (e.g. AirPods held by a phone). nil when capture is healthy.
+    @Published var audioInputWarning: String?
     @Published var permissions = PermissionSnapshot(
         microphone: AVCaptureDevice.authorizationStatus(for: .audio),
         accessibilityTrusted: AXIsProcessTrusted()

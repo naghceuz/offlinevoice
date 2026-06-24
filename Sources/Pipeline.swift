@@ -14,6 +14,11 @@ final class Pipeline {
     /// Fired when a finished dictation couldn't be auto-pasted because
     /// Accessibility isn't trusted — the text is left on the clipboard instead.
     var onPasteNeedsAccessibility: () -> Void = { }
+    /// Real-time mic level (0...1) during recording, for the waveform HUD.
+    var onAudioLevel: (Float) -> Void = { _ in }
+    /// Fired after a recording finishes: `true` when the capture was near-silent
+    /// (likely a wrong/busy input device), `false` to clear a prior warning.
+    var onAudioInputWarning: (Bool) -> Void = { _ in }
     private(set) var isModelReady = false
     private(set) var state: State = .idle
 
@@ -31,11 +36,19 @@ final class Pipeline {
 
     /// Minimum samples worth processing (~0.2s at 16 kHz) to ignore accidental taps.
     private let minSamples = 3_200
+    /// Below this peak amplitude a capture is treated as effectively silent —
+    /// real speech sits well above it, a dead/busy device sits at ~0.
+    private let silenceThreshold: Float = 0.01
 
     init(settingsStore: SettingsStore) {
         self.settingsStore = settingsStore
         self.asr = settingsStore.settings.asConfig().makeASREngine()
         self.engineSignature = Self.signature(for: settingsStore.settings)
+        // Forward real mic level to the HUD. The tap fires on the audio thread, so
+        // hop to main where the (MainActor) callback updates UI.
+        recorder.onLevel = { [weak self] level in
+            DispatchQueue.main.async { self?.onAudioLevel(level) }
+        }
     }
 
     /// ASR-relevant settings that require rebuilding the engine when changed.
@@ -123,7 +136,7 @@ final class Pipeline {
             return
         }
         do {
-            try recorder.start()
+            try recorder.start(preferredDeviceUID: settingsStore.settings.preferredInputDeviceUID)
             Log.write("recording started (modelReady=\(isModelReady))")
             transition(to: .recording)
         } catch {
@@ -144,6 +157,19 @@ final class Pipeline {
         guard samples.count >= minSamples else {
             Log.write("too few samples, ignoring")
             // Return to whichever resting state matches model readiness.
+            transition(to: isModelReady ? .idle : .loadingModel)
+            return
+        }
+        // The user spoke long enough, so a near-silent capture means audio never
+        // reached us — a wrong/busy input device. Warn; otherwise clear any prior
+        // warning now that capture works.
+        let nearSilent = recorder.lastPeak < silenceThreshold
+        onAudioInputWarning(nearSilent)
+        guard !nearSilent else {
+            // Critical: never transcribe silence. Whisper-family models hallucinate
+            // confident phrases ("Thank you.", "Thank you for watching") on silent
+            // input, which would then auto-paste garbage. Drop it and just warn.
+            Log.write("near-silent capture peak=\(recorder.lastPeak), skipping transcription")
             transition(to: isModelReady ? .idle : .loadingModel)
             return
         }

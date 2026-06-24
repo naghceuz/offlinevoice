@@ -41,6 +41,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         pipeline.onPasteNeedsAccessibility = { [weak self] in
             self?.handlePasteNeedsAccessibility()
         }
+        pipeline.onAudioLevel = { [weak self] level in
+            self?.indicator.updateLevel(level)
+        }
+        pipeline.onAudioInputWarning = { [weak self] lowSignal in
+            guard let self else { return }
+            self.appState.audioInputWarning = lowSignal
+                ? "No sound reached the mic. Your input device may be busy on another device (e.g. AirPods connected to your phone). Pick the built‑in mic in Settings, or check your system input."
+                : nil
+            // Surface it on the floating HUD too — the user is looking at the app
+            // they dictated into, not the Home banner.
+            if lowSignal { self.indicator.showNoAudio() }
+        }
 
         appState.openAccessibilitySettings = { [weak self] in self?.openAccessibilitySettings() }
         appState.openMicrophoneSettings = { [weak self] in self?.openMicSettings() }

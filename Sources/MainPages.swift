@@ -92,6 +92,22 @@ struct HomeView: View {
                     .background(Color.orange.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
+
+                if let warning = appState.audioInputWarning {
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        Text(warning)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Open Mic Settings", action: appState.openMicrophoneSettings)
+                            .buttonStyle(.borderedProminent)
+                            .tint(Brand.yellow)
+                    }
+                    .padding(14)
+                    .background(Color.orange.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
             }
 
             SectionCard("Permissions", subtitle: "OfflineVoice needs macOS permission for voice capture and app-wide paste.") {
@@ -175,6 +191,19 @@ struct SettingsPageView: View {
         ) {
             SectionCard("Dictation hotkey", subtitle: "Modifier-only shortcuts work best for hold-to-talk.") {
                 ShortcutRecorderView(shortcut: binding(\.primaryShortcut))
+            }
+
+            SectionCard("Microphone", subtitle: "Choose which input OfflineVoice records from. System default follows macOS.") {
+                Picker("Input device", selection: binding(\.preferredInputDeviceUID)) {
+                    Text("System default").tag(String?.none)
+                    ForEach(AudioDevices.inputDevices()) { device in
+                        Text(device.name).tag(String?.some(device.uid))
+                    }
+                }
+                .pickerStyle(.menu)
+                Text("If a recording comes through silent, your system default may be a Bluetooth headset that's busy on another device — pick the built‑in mic here to be sure.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
             }
 
             SectionCard("Paste behavior") {

@@ -179,6 +179,9 @@ struct AppSettings: Codable, Equatable {
     var restoreClipboard: Bool
     var primaryShortcut: KeyboardShortcut
     var recognitionMode: RecognitionMode
+    /// Persisted Core Audio device UID to record from; nil follows the macOS
+    /// system default input. UIDs survive reboots/reconnects (unlike device IDs).
+    var preferredInputDeviceUID: String?
 
     static let `default` = AppSettings(
         hasCompletedOnboarding: false,
@@ -187,7 +190,8 @@ struct AppSettings: Codable, Equatable {
         autoPaste: true,
         restoreClipboard: true,
         primaryShortcut: .rightOption,
-        recognitionMode: .speed
+        recognitionMode: .speed,
+        preferredInputDeviceUID: nil
     )
 
     func asConfig() -> Config {
@@ -205,7 +209,8 @@ struct AppSettings: Codable, Equatable {
         autoPaste: Bool,
         restoreClipboard: Bool,
         primaryShortcut: KeyboardShortcut,
-        recognitionMode: RecognitionMode
+        recognitionMode: RecognitionMode,
+        preferredInputDeviceUID: String?
     ) {
         self.hasCompletedOnboarding = hasCompletedOnboarding
         self.launchAtLogin = launchAtLogin
@@ -214,6 +219,7 @@ struct AppSettings: Codable, Equatable {
         self.restoreClipboard = restoreClipboard
         self.primaryShortcut = primaryShortcut
         self.recognitionMode = recognitionMode
+        self.preferredInputDeviceUID = preferredInputDeviceUID
     }
 
     init(from decoder: Decoder) throws {
@@ -228,6 +234,7 @@ struct AppSettings: Codable, Equatable {
         // Tolerate a retired mode value (e.g. an old "balanced") by falling back
         // to the default rather than discarding every other saved setting.
         recognitionMode = (try? c.decodeIfPresent(RecognitionMode.self, forKey: .recognitionMode)) ?? d.recognitionMode
+        preferredInputDeviceUID = try c.decodeIfPresent(String.self, forKey: .preferredInputDeviceUID) ?? d.preferredInputDeviceUID
     }
 }
 
