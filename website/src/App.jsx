@@ -27,7 +27,9 @@ import {
 } from "@icons-pack/react-simple-icons";
 
 const navItems = ["Why OfflineVoice", "Speed", "Privacy", "How it works", "FAQ"];
-const downloadHref = "/downloads/OfflineVoice-mac.dmg";
+// Routes through the /api/download serverless function so each download is
+// counted, then 302-redirects to the real .dmg under /downloads/.
+const downloadHref = "/api/download";
 const githubHref = "https://github.com/OwenZhangGC/offlinevoice";
 
 const proofItems = [
@@ -223,7 +225,7 @@ function AppIcon({ app }) {
 
 function DownloadLink({ className, children, onClick }) {
   return (
-    <a className={className} href={downloadHref} download onClick={onClick}>
+    <a className={className} href={downloadHref} onClick={onClick}>
       {children}
     </a>
   );

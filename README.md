@@ -9,7 +9,7 @@ OfflineVoice is the fastest local voice dictation for Mac. Hold one hotkey and s
 No cloud. No account. No subscription. Your audio and text never leave the device. **Free and open source (GPL-3.0).**
 
 <p align="center">
-  <a href="https://www.offlinevoice.ai/downloads/OfflineVoice-mac.dmg">
+  <a href="https://www.offlinevoice.ai/api/download">
     <img src="https://img.shields.io/badge/Download%20for%20Mac-.dmg-ffd000?style=for-the-badge&logo=apple&logoColor=black&labelColor=1a1a1a" alt="Download for Mac">
   </a>
   &nbsp;
@@ -26,7 +26,7 @@ No cloud. No account. No subscription. Your audio and text never leave the devic
 Hold key → on-device ASR → paste
 ```
 
-> One click: **[⬇ Download OfflineVoice for Mac (.dmg)](https://www.offlinevoice.ai/downloads/OfflineVoice-mac.dmg)** — or build from source below.
+> One click: **[⬇ Download OfflineVoice for Mac (.dmg)](https://www.offlinevoice.ai/api/download)** — or build from source below.
 
 The current repo contains two deliverables:
 
