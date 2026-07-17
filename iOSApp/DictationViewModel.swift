@@ -85,7 +85,7 @@ final class DictationViewModel: ObservableObject {
                     } else if self.roundTripMode {
                         // Hand off to the keyboard via the App Group, and keep a
                         // copy on screen so nothing is ever silently lost.
-                        SharedStore.setPending(text, at: Date().timeIntervalSince1970)
+                        SharedStore.setPending(text)
                         self.roundTripResult = text
                     } else {
                         self.transcript = self.transcript.isEmpty ? text : self.transcript + " " + text
