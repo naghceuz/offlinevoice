@@ -30,7 +30,7 @@ const navItems = ["Why OfflineVoice", "Speed", "Privacy", "How it works", "FAQ"]
 // Routes through the /api/download serverless function so each download is
 // counted, then 302-redirects to the real .dmg under /downloads/.
 const downloadHref = "/api/download";
-const githubHref = "https://github.com/OwenZhangGC/offlinevoice";
+const githubHref = "https://github.com/naghceuz/offlinevoice";
 
 const proofItems = [
   { label: "Fastest local dictation", icon: Zap },
