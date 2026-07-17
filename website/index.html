@@ -5,35 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="OfflineVoice is the fastest local voice dictation for Mac. Hold a key, speak, and your words are pasted almost instantly — fully on-device, private, no subscription."
+      content="OfflineVoice is fast offline voice dictation for Mac. Hold a key, speak, and your speech becomes text instantly — 100% on-device speech-to-text, no internet, no cloud, no subscription. Free and open source."
     />
+    <link rel="canonical" href="https://www.offlinevoice.ai/" />
+    <meta name="google-site-verification" content="dECuHsIqaLpV1SUtXnpn9RRU9tgMMX_ACrsWRl2zbsk" />
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23020202'/%3E%3Cg stroke='%23FFD000' stroke-width='5' stroke-linecap='round'%3E%3Cpath d='M15 28v8'/%3E%3Cpath d='M23 18v28'/%3E%3Cpath d='M31 12v40'/%3E%3Cpath d='M39 20v24'/%3E%3Cpath d='M47 28v8'/%3E%3C/g%3E%3C/svg%3E"
     />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <title>OfflineVoice — The fastest local voice dictation for Mac</title>
+    <title>OfflineVoice — Offline Voice Dictation for Mac | Local Speech-to-Text</title>
 
     <!-- Open Graph / social preview -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="OfflineVoice" />
-    <meta property="og:title" content="OfflineVoice — The fastest local voice dictation for Mac" />
+    <meta property="og:title" content="OfflineVoice — Offline Voice Dictation for Mac | Local Speech-to-Text" />
     <meta
       property="og:description"
-      content="The fastest local voice dictation for Mac. Speak anywhere, type nowhere — fully on-device, private, no subscription."
+      content="Fast offline voice dictation for Mac. Speak anywhere, type nowhere — 100% on-device speech-to-text, no internet, no subscription."
     />
     <meta property="og:url" content="https://www.offlinevoice.ai/" />
     <meta property="og:image" content="https://www.offlinevoice.ai/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="OfflineVoice — The fastest local voice dictation for Mac" />
+    <meta name="twitter:title" content="OfflineVoice — Offline Voice Dictation for Mac | Local Speech-to-Text" />
     <meta
       name="twitter:description"
-      content="The fastest local voice dictation for Mac. Speak anywhere, type nowhere — fully on-device, private, no subscription."
+      content="Fast offline voice dictation for Mac. Speak anywhere, type nowhere — 100% on-device speech-to-text, no internet, no subscription."
     />
     <meta name="twitter:image" content="https://www.offlinevoice.ai/og-image.png" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "OfflineVoice",
+        "operatingSystem": "macOS",
+        "applicationCategory": "UtilitiesApplication",
+        "description": "Fast offline voice dictation for Mac. Hold a hotkey, speak, and your words are pasted instantly into any app — 100% on-device speech recognition with no cloud, no account, and no subscription.",
+        "url": "https://www.offlinevoice.ai/",
+        "downloadUrl": "https://www.offlinevoice.ai/api/download",
+        "softwareVersion": "0.3.1",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "sameAs": ["https://github.com/OwenZhangGC/offlinevoice"]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does OfflineVoice work outside the browser?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. It pastes into the focused text field across native Mac apps — anywhere you can type."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What's the difference between Speed and Accuracy mode?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Speed (the default) uses Apple's native on-device recognition — near-instant and zero extra downloads. Accuracy uses Whisper (large-v3 turbo) for sharper results on English and technical content; it downloads once, then runs offline."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does OfflineVoice need the internet?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Recognition runs on your Mac. Speed mode works immediately; the optional Whisper model downloads once and then runs fully offline."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is the download safe to open?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. OfflineVoice is signed with a Developer ID and notarized by Apple, so you can just double-click the download to open it — no Gatekeeper warnings."
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
