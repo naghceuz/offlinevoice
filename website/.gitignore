@@ -3,3 +3,4 @@ dist/
 .npm-cache/
 qa/*.png
 .vercel
+.env*
