@@ -1,6 +1,63 @@
 import Foundation
 import WhisperKit
 
+/// Minimal, mockable view of a WhisperKit `WordTiming` — decouples the pure
+/// punctuation logic from the WhisperKit module so it's unit-testable
+/// without linking that package into the test target.
+struct PauseWord: Equatable {
+    let word: String
+    let start: Float
+    let end: Float
+}
+
+/// Same pause-based punctuation policy as `PausePunctuator` (shares its
+/// gap thresholds and "already punctuated" mark set), but built directly by
+/// concatenating WhisperKit's word timings instead of locating offsets in a
+/// pre-formatted string. WhisperKit doesn't apply Apple-style ITN
+/// reformatting, and joining `WordTiming.word` values in order with no
+/// separator is WhisperKit's own supported reconstruction pattern (see
+/// `TranscriptionUtilities.mergeTranscriptionResults` in the vendored
+/// package) — English/Latin tokens carry their own leading space, CJK tokens
+/// don't need one — so building the output straight from words is both
+/// simpler and safe here.
+enum WhisperPausePunctuator {
+    static func apply(words: [PauseWord], language: String?) -> String {
+        guard !words.isEmpty else { return "" }
+        let isCJK = ["zh", "ja"].contains(language ?? "")
+
+        var out = ""
+        var capitalizeNext = false
+        for (i, w) in words.enumerated() {
+            var token = w.word
+            if capitalizeNext, let idx = token.firstIndex(where: { !$0.isWhitespace }) {
+                token.replaceSubrange(idx...idx, with: token[idx].uppercased())
+            }
+            capitalizeNext = false
+            out += token
+
+            guard i < words.count - 1 else { continue }
+            let gap = words[i + 1].start - w.end
+            guard gap > Float(PausePunctuator.commaGap) else { continue }
+
+            // Don't double up if WhisperKit's own decoding already merged
+            // punctuation onto either side of this boundary.
+            let trimmedCurrent = token.trimmingCharacters(in: .whitespaces)
+            if let last = trimmedCurrent.last, PausePunctuator.terminalMarks.contains(last) { continue }
+            let trimmedNext = words[i + 1].word.trimmingCharacters(in: .whitespaces)
+            if let first = trimmedNext.first, PausePunctuator.terminalMarks.contains(first) { continue }
+
+            let isSentence = gap > Float(PausePunctuator.sentenceGap)
+            if isCJK {
+                out += isSentence ? "。" : "，"
+            } else {
+                out += isSentence ? "." : ","
+                capitalizeNext = isSentence
+            }
+        }
+        return out
+    }
+}
+
 /// On-device transcription via WhisperKit (CoreML / Metal on Apple Silicon).
 ///
 /// Loads strictly from the local cache with no network access — WhisperKit
@@ -77,13 +134,23 @@ actor WhisperKitEngine: ASREngine {
             task: .transcribe,
             language: locked,
             detectLanguage: locked == nil,
+            wordTimestamps: true,
             firstTokenLogProbThreshold: relaxed ? nil : -1.5,
             noSpeechThreshold: relaxed ? nil : 0.6
         )
         let results = try await kit.transcribe(audioArray: samples, decodeOptions: options)
-        return results
-            .map(\.text)
-            .joined(separator: " ")
+
+        let words = results.flatMap(\.allWords).map { PauseWord(word: $0.word, start: $0.start, end: $0.end) }
+        guard !words.isEmpty else {
+            // Word timestamps weren't populated for this decode (e.g. no
+            // alignment weights available) — fall back to WhisperKit's own
+            // text exactly as before this feature existed.
+            return results
+                .map(\.text)
+                .joined(separator: " ")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return WhisperPausePunctuator.apply(words: words, language: results.first?.language)
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 

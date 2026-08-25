@@ -16,6 +16,7 @@
 		1DF8AA8E15210E8941476494 /* ASREngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C457CCEC3A1322942439122F /* ASREngine.swift */; };
 		1E1EB14116CC372CE7A4C5C5 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D5185F2E58A3DD3B65F17A /* Pipeline.swift */; };
 		212EDAC61CA07EB9A0071EA2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 361FE3296A79CE8FB0456A2F /* AppState.swift */; };
+		28DF6E69E0896F48A4D187ED /* WhisperPausePunctuatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EDDBB0C5CE9BC138989C9F /* WhisperPausePunctuatorTests.swift */; };
 		29B4FD5CF015793EEC983FD4 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */; };
 		2CD07D7F4C65379AE5E1572D /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD40138CB186054732C1952 /* WaveformView.swift */; };
 		301D2615BDCB591C869E2972 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */; };
@@ -27,6 +28,7 @@
 		5B6E69164019DA30607749E4 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6874B77ACDF0C6CC8F33F8F7 /* AudioRecorder.swift */; };
 		61A1E6E9238C1C25EA723AAE /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A6C32D751775A6EE72AFFF /* Benchmark.swift */; };
 		62D214E7A4D89AFA1C574883 /* OfflineVoiceKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3575F8B1DB85AD20D5FDACA3 /* OfflineVoiceKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		635788A3A021D9C783F5958F /* PausePunctuatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C81E193C27D3EE72774340 /* PausePunctuatorTests.swift */; };
 		65ED49D108BAC4ED141C2815 /* AudioDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF9EE8458582AF11209F950 /* AudioDevices.swift */; };
 		66E0119D9A454EEB6A6A7949 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D9696D495EF8C019FFE487 /* AppDelegate.swift */; };
 		74CC0BAAA11FFD2E3E5C256C /* IndicatorWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026D6215DE2016A73F83CA5 /* IndicatorWindow.swift */; };
@@ -57,6 +59,13 @@
 			remoteGlobalIDString = 22AB643FEBA0A0FEBB1AC0B5;
 			remoteInfo = OfflineVoiceKeyboard;
 		};
+		756E55C4B8BDE0706AE8F3B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 317866190E343560FD8A1459 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95D80EE406309BCA172A441F;
+			remoteInfo = OfflineVoice;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -75,6 +84,7 @@
 
 /* Begin PBXFileReference section */
 		05A6C32D751775A6EE72AFFF /* Benchmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Benchmark.swift; sourceTree = "<group>"; };
+		05C81E193C27D3EE72774340 /* PausePunctuatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PausePunctuatorTests.swift; sourceTree = "<group>"; };
 		0FE85AFEDC10DA6903391B88 /* mixed_tech.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = mixed_tech.wav; sourceTree = "<group>"; };
 		12AF210449E2B6238AEDB5CB /* zh_tech.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = zh_tech.wav; sourceTree = "<group>"; };
 		18FCA8FDFAE9556F9C7D2F27 /* references.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = references.json; sourceTree = "<group>"; };
@@ -95,11 +105,13 @@
 		7C63C7D7A722253675EA7385 /* MainPages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPages.swift; sourceTree = "<group>"; };
 		7DF9EE8458582AF11209F950 /* AudioDevices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDevices.swift; sourceTree = "<group>"; };
 		841A9BBEA4CF8FBD29B52A48 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		862B0973EAAE14979736F2D6 /* OfflineVoiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OfflineVoiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		882F802C063083AC7326A732 /* DictationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationViewModel.swift; sourceTree = "<group>"; };
 		8BB04ABE1871BE9647128CE0 /* HotkeyMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyMonitor.swift; sourceTree = "<group>"; };
 		8BD40138CB186054732C1952 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
 		8ECB249B2B30B6433615201F /* WhisperKitEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperKitEngine.swift; sourceTree = "<group>"; };
 		A17D5DACF29C4085EA0AFB53 /* en_meeting.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = en_meeting.wav; sourceTree = "<group>"; };
+		A4EDDBB0C5CE9BC138989C9F /* WhisperPausePunctuatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperPausePunctuatorTests.swift; sourceTree = "<group>"; };
 		AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
 		AE93D26C8FAB87F3F3B2BB6D /* OfflineVoice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineVoice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6250E7FFF8CDC50868671AB /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
@@ -124,6 +136,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		16F48131AD7912DF26F31861 /* OfflineVoiceTests */ = {
+			isa = PBXGroup;
+			children = (
+				05C81E193C27D3EE72774340 /* PausePunctuatorTests.swift */,
+				A4EDDBB0C5CE9BC138989C9F /* WhisperPausePunctuatorTests.swift */,
+			);
+			path = OfflineVoiceTests;
+			sourceTree = "<group>";
+		};
 		3FD4899AFD17F105BDB8BE5C /* Keyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -138,6 +159,7 @@
 				AE93D26C8FAB87F3F3B2BB6D /* OfflineVoice.app */,
 				CBA7FD396FFBA61CDA0C32D8 /* OfflineVoiceiOS.app */,
 				3575F8B1DB85AD20D5FDACA3 /* OfflineVoiceKeyboard.appex */,
+				862B0973EAAE14979736F2D6 /* OfflineVoiceTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -207,8 +229,17 @@
 				8688382DCFCB9EEA8EFB2EA7 /* Resources */,
 				A999912C19382E9185281F4C /* Shared */,
 				51791178EF2ECEB121904BBB /* Sources */,
+				98DA2ABE9332D17CC0FCEFDA /* Tests */,
 				4A0218E0E9BA0DDD16F51DCC /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		98DA2ABE9332D17CC0FCEFDA /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				16F48131AD7912DF26F31861 /* OfflineVoiceTests */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		A999912C19382E9185281F4C /* Shared */ = {
@@ -297,6 +328,24 @@
 			productReference = AE93D26C8FAB87F3F3B2BB6D /* OfflineVoice.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E11EDFAC98F422E498F3BDA9 /* OfflineVoiceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EF68F54440DEB246015158FB /* Build configuration list for PBXNativeTarget "OfflineVoiceTests" */;
+			buildPhases = (
+				2E0986D7F059EFD7724496BA /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B38674C5C22967D221C227D4 /* PBXTargetDependency */,
+			);
+			name = OfflineVoiceTests;
+			packageProductDependencies = (
+			);
+			productName = OfflineVoiceTests;
+			productReference = 862B0973EAAE14979736F2D6 /* OfflineVoiceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -338,6 +387,7 @@
 			targets = (
 				95D80EE406309BCA172A441F /* OfflineVoice */,
 				22AB643FEBA0A0FEBB1AC0B5 /* OfflineVoiceKeyboard */,
+				E11EDFAC98F422E498F3BDA9 /* OfflineVoiceTests */,
 				466394DC661AB8F5FFCDCF00 /* OfflineVoiceiOS */,
 			);
 		};
@@ -360,6 +410,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2E0986D7F059EFD7724496BA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				635788A3A021D9C783F5958F /* PausePunctuatorTests.swift in Sources */,
+				28DF6E69E0896F48A4D187ED /* WhisperPausePunctuatorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		54050BCBDE138DBCD933BFD0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -420,6 +479,11 @@
 			isa = PBXTargetDependency;
 			target = 22AB643FEBA0A0FEBB1AC0B5 /* OfflineVoiceKeyboard */;
 			targetProxy = 3DA6F20F4E945951E4FB2098 /* PBXContainerItemProxy */;
+		};
+		B38674C5C22967D221C227D4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 95D80EE406309BCA172A441F /* OfflineVoice */;
+			targetProxy = 756E55C4B8BDE0706AE8F3B5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -496,7 +560,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -504,7 +568,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.3.1;
+				MARKETING_VERSION = 0.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oz.offlinevoice;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.10;
@@ -641,7 +705,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = H6E9M3Z7YM;
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Resources/Info.plist;
@@ -650,7 +714,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.3.1;
+				MARKETING_VERSION = 0.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.oz.offlinevoice;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.10;
@@ -675,6 +739,50 @@
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.10;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		ED71AAD0E873A6226A76A4FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oz.OfflineVoiceTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.10;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OfflineVoice.app/Contents/MacOS/OfflineVoice";
+			};
+			name = Release;
+		};
+		FAEF9764F39F792304E2DA49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oz.OfflineVoiceTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.10;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OfflineVoice.app/Contents/MacOS/OfflineVoice";
 			};
 			name = Debug;
 		};
@@ -713,6 +821,15 @@
 			buildConfigurations = (
 				B8F9BD305EF38E67C7B06666 /* Debug */,
 				1F140975059E047598B13A12 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EF68F54440DEB246015158FB /* Build configuration list for PBXNativeTarget "OfflineVoiceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAEF9764F39F792304E2DA49 /* Debug */,
+				ED71AAD0E873A6226A76A4FB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
