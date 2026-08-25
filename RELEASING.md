@@ -91,6 +91,11 @@ step that actually updates what users download from offlinevoice.ai:
 cd website && npx vercel --prod
 ```
 
+Run this in a **regular Terminal window**, not inside an AI-agent session:
+Vercel CLI ≥59 detects agent environments and rejects production deploys
+with a misleading "Not authorized" (auth is actually fine — verify with
+`npx vercel whoami` if unsure).
+
 ## 8. Post-release sanity check
 
 - Download from https://www.offlinevoice.ai/api/download and confirm the DMG
