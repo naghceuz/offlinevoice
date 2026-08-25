@@ -607,7 +607,7 @@ export function App() {
         <footer className="site-footer">
           <BrandMark compact />
           <span>OfflineVoice.ai</span>
-          <p>v0.3.1 · The fastest local voice dictation for Mac. Free &amp; open source (GPL-3.0).</p>
+          <p>v0.4.0 · The fastest local voice dictation for Mac. Free &amp; open source (GPL-3.0).</p>
           <p className="footer-links">
             <a href="#privacy-policy">Privacy Policy</a>
             <a href={githubHref} target="_blank" rel="noreferrer">

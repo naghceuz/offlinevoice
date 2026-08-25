@@ -198,7 +198,7 @@ Microphone and Speech Recognition are required for on-device transcription. Acce
 
 ## App Settings
 
-OfflineVoice v0.3.1 stores user settings at:
+OfflineVoice v0.4.0 stores user settings at:
 
 ```text
 ~/.config/offlinevoice/config.json
@@ -252,7 +252,7 @@ setting neither falls back to the ad-hoc build.
 ## Temporary Choices and Follow-Ups
 
 - The public download is a checked-in/static file under `website/public/downloads/`.
-- Translate and Ask Anything are visible as future shortcut modes but disabled in v0.3.1.
+- Translate and Ask Anything are visible as future shortcut modes but disabled in v0.4.0.
 - Launch at login uses `SMAppService`.
 - Switching recognition mode from the UI is persisted and reloads the engine in place.
 - The website product preview is a designed placeholder until real screenshots or a screen recording are captured.

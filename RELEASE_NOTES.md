@@ -1,4 +1,4 @@
-# OfflineVoice v0.3.1
+# OfflineVoice v0.4.0
 
 **The fastest local dictation for Mac.** Private, offline voice input — now near-instant.
 
@@ -11,18 +11,21 @@ the text is pasted at your cursor. Because it runs entirely on your Mac, it's fa
 
 ---
 
-## What's new in 0.3.1
+## What's new in 0.4.0
 
-A reliability fix for dictation when a Bluetooth headset is in the picture:
+**Punctuation that follows your voice.** Long dictations used to come out as one
+unbroken wall of text — hard to read, awkward to send to anyone. Now OfflineVoice
+listens to the natural pauses in your speech and punctuates accordingly:
 
-- **No more phantom text.** When your input device was busy on another device —
-  classically AirPods connected to your phone — OfflineVoice used to capture silence
-  and paste a hallucinated "Thank you." It now detects a silent capture, skips
-  transcription entirely, and tells you on the spot instead of pasting nonsense.
-- **The waveform tells the truth.** The listening bars now track your real mic level,
-  so they visibly flatten the moment no sound is reaching the mic.
-- **Pick your microphone.** Settings has a new input-device picker if you want to pin
-  dictation to your built-in mic. System default still follows macOS.
+- **Speak naturally, get real sentences.** A short breath becomes a comma; a longer
+  pause between thoughts becomes a period (with the next word capitalized in English,
+  full-width 「，」「。」 in Chinese). No need to say "comma" or "period" out loud.
+- **Still instant.** This is pure arithmetic over word timings the recognition engine
+  already produces — no extra model, no post-processing pass, no added latency. The
+  hold-to-talk → release → paste flow is exactly as fast as before.
+- **Works in both modes.** Speed (Apple on-device) and Accuracy (Whisper) both get
+  pause-aware punctuation, and it never doubles up marks the engine already placed —
+  numbers, dates, and the engine's own formatting are left untouched.
 
 ## Two recognition modes
 
