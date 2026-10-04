@@ -106,5 +106,7 @@ if [[ -n "$DEVELOPER_ID_IDENTITY" ]]; then
   fi
 fi
 
-shasum -a 256 "$DMG_PATH" > "$DMG_PATH.sha256"
+# Write a bare filename (not an absolute path) so `shasum -c` works from any
+# checkout or machine, not just the one that produced the DMG.
+(cd "$OUTPUT_DIR" && shasum -a 256 "$(basename "$DMG_PATH")" > "$(basename "$DMG_PATH").sha256")
 echo "Created $DMG_PATH"

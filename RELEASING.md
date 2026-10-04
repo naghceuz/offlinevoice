@@ -1,16 +1,19 @@
 # Releasing OfflineVoice (macOS)
 
 The complete checklist for shipping a new version to **all** channels: the
-website download, GitHub Releases, and the docs. Follow it top to bottom —
-every credential below is already set up on this Mac; nothing needs to be
-re-created between releases.
+website download, GitHub Releases, and the docs. Follow it top to bottom.
 
-## 0. One-time setup (already done — do NOT redo)
+## 0. One-time setup (per machine)
 
-These exist on this machine and persist across releases:
+These live in the login keychain of the Mac that releases, so they persist
+between releases but are **lost when you move to a new Mac** (private keys
+never leave the machine). On a fresh machine, redo both before step 4:
 
 - **Developer ID certificate** (login keychain):
   `Developer ID Application: Guanchen Zhang (H6E9M3Z7YM)`
+  Check with `security find-identity -v -p codesigning`. If missing, create a
+  new one in Xcode ▸ Settings ▸ Accounts ▸ Manage Certificates ▸ "+" ▸
+  Developer ID Application (the old one stays valid for already-shipped builds).
 - **Notarization credentials** (login keychain, stored once via
   `xcrun notarytool store-credentials`): profile name **`OfflineVoice-Notary`**.
   Verify it's alive with:
@@ -19,6 +22,12 @@ These exist on this machine and persist across releases:
   ```
   Only if that errors do you need to re-store credentials (README →
   "Signing & notarizing for public distribution").
+- **Website deploy state** (gitignored, so also missing on a fresh clone):
+  `website/public/downloads/OfflineVoice-mac.dmg` + `.sha256` — restore the
+  current release from GitHub (`gh release download vX.Y.Z --dir
+  website/public/downloads`) **before any Vercel deploy**, or the live download
+  link 404s. Then `cd website && npx vercel login && npx vercel link` to re-attach
+  the `owens-projects-ba5444b1/website` project.
 
 ## 1. Bump the version
 
