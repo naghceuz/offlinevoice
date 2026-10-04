@@ -3,13 +3,22 @@ import AVFoundation
 import Foundation
 import ServiceManagement
 
-/// The single user-facing speed/accuracy choice. Each mode maps to a
-/// transcription engine + model. There is deliberately NO separate LLM cleanup
-/// step: it kept punctuation cheap to add but cost whole seconds of latency.
-/// Punctuation now comes from the engine itself, so dictation stays instant.
+/// The user-facing recognition-mode choice. Each mode maps to a transcription
+/// engine + model. There is deliberately NO separate LLM cleanup step: it kept
+/// punctuation cheap to add but cost whole seconds of latency. Punctuation
+/// comes from the engine itself, so dictation stays instant.
+///
+/// `speed` is the bundled SenseVoice model: one model with automatic language
+/// identification for Chinese, Cantonese, English, Japanese and Korean — and
+/// mixed Chinese/English inside one sentence. It replaced Apple's recognizer
+/// as the default because `SFSpeechRecognizer` is bound to a single locale
+/// (the Mac's system language), so a Chinese sentence spoken on an English
+/// system came out as English nonsense. Apple's engine stays available as
+/// `native` for people who only ever dictate in their system language.
 enum RecognitionMode: String, Codable, CaseIterable, Identifiable {
     case speed
     case accuracy
+    case native
 
     var id: String { rawValue }
 
@@ -17,14 +26,16 @@ enum RecognitionMode: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .speed: return "Speed"
         case .accuracy: return "Accuracy"
+        case .native: return "Native"
         }
     }
 
     /// What you get, in one line — shown next to the choice in Settings.
     var summary: String {
         switch self {
-        case .speed: return "Apple's native on-device recognition. Near-instant, private, no download."
-        case .accuracy: return "Whisper turbo: more accurate for English and technical speech. Downloads once on first use."
+        case .speed: return "Multilingual on-device model, bundled with the app. Auto-detects Chinese, English, Japanese, Korean and Cantonese — including mixed Chinese/English in one sentence."
+        case .accuracy: return "Whisper turbo: an alternative for English and technical speech. Downloads once on first use."
+        case .native: return "Apple's built-in recognizer. No model, but it only understands your Mac's system language."
         }
     }
 
@@ -32,27 +43,30 @@ enum RecognitionMode: String, Codable, CaseIterable, Identifiable {
     /// the user can see the cost of each choice up front, not as guesswork.
     var latencyNote: String {
         switch self {
-        case .speed: return "fastest"
+        case .speed: return "near-instant"
         case .accuracy: return "≈ 0.5 s after you finish"
+        case .native: return "near-instant"
         }
     }
 
     var engineName: String {
         switch self {
-        case .speed: return "Apple on-device"
+        case .speed: return "SenseVoice (bundled)"
         case .accuracy: return "Whisper turbo"
+        case .native: return "Apple on-device"
         }
     }
 
     /// Backing ASR engine id consumed by `Config.makeASREngine()`.
     var asrEngine: String {
         switch self {
-        case .speed: return "apple"
+        case .speed: return "sensevoice"
         case .accuracy: return "whisperkit"
+        case .native: return "apple"
         }
     }
 
-    /// WhisperKit model id (ignored by the Apple engine).
+    /// WhisperKit model id (ignored by the other engines).
     var whisperModel: String {
         "large-v3-v20240930_turbo"
     }

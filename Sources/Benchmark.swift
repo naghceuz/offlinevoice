@@ -150,8 +150,11 @@ enum Benchmark {
     }
 
     private static func transcribe(_ kit: WhisperKit, _ sample: Sample) async throws -> String {
-        let lang: String? = (sample.lang == "en") ? "en" : (sample.lang == "zh" ? "zh" : nil)
-        let options = DecodingOptions(task: .transcribe, language: lang, detectLanguage: lang == nil)
+        // Never tell the model the clip's language: the live engine runs with
+        // auto-detection, and a benchmark that pre-announces zh/en would hide
+        // exactly the mixed-language failures we care about. `sample.lang` is
+        // only used to pick the WER/CER metric.
+        let options = DecodingOptions(task: .transcribe, language: nil, detectLanguage: true)
         let results = try await kit.transcribe(audioArray: sample.samples, decodeOptions: options)
         return results.map(\.text).joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
     }

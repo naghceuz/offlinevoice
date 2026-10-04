@@ -1,40 +1,51 @@
-# OfflineVoice v0.4.0
+# OfflineVoice v0.5.0
 
-**The fastest local dictation for Mac.** Private, offline voice input — now near-instant.
+**The fastest local dictation for Mac.** Private, offline voice input — now in your language, whichever one you're speaking.
 
 OfflineVoice turns your speech into text in any app — hold one key, talk, release, and
 the text is pasted at your cursor. Because it runs entirely on your Mac, it's faster
 *and* more private than cloud-based tools. No account, no subscription, no cloud upload.
 
 🔗 **Website:** https://www.offlinevoice.ai
-⬇️ **Download:** [OfflineVoice-mac.dmg](https://www.offlinevoice.ai/downloads/OfflineVoice-mac.dmg)
+⬇️ **Download:** [OfflineVoice-mac.dmg](https://www.offlinevoice.ai/api/download)
 
 ---
 
-## What's new in 0.4.0
+## What's new in 0.5.0
 
-**Punctuation that follows your voice.** Long dictations used to come out as one
-unbroken wall of text — hard to read, awkward to send to anyone. Now OfflineVoice
-listens to the natural pauses in your speech and punctuates accordingly:
+**Speak Chinese, English, or both — no setup.** Until now the default engine was
+Apple's built-in recognizer, which is tied to your Mac's *system language*: on an
+English-language Mac, a Chinese sentence came back as English gibberish. 0.5.0
+replaces it with **SenseVoice**, a multilingual model that ships inside the app:
 
-- **Speak naturally, get real sentences.** A short breath becomes a comma; a longer
-  pause between thoughts becomes a period (with the next word capitalized in English,
-  full-width 「，」「。」 in Chinese). No need to say "comma" or "period" out loud.
-- **Still instant.** This is pure arithmetic over word timings the recognition engine
-  already produces — no extra model, no post-processing pass, no added latency. The
-  hold-to-talk → release → paste flow is exactly as fast as before.
-- **Works in both modes.** Speed (Apple on-device) and Accuracy (Whisper) both get
-  pause-aware punctuation, and it never doubles up marks the engine already placed —
-  numbers, dates, and the engine's own formatting are left untouched.
+- **Detects the language itself.** Mandarin, Cantonese, English, Japanese and Korean,
+  with no language setting to get wrong — and mixed Chinese/English inside one
+  sentence ("我想试一下这个 feature 好不好用") comes out as you said it.
+- **Still instant.** The model is non-autoregressive, so it decodes a whole sentence
+  in one pass: in our tests a 2–8 second clip transcribes in well under 100 ms on
+  Apple Silicon, and the model loads in under half a second at launch.
+- **Punctuation included.** The engine emits its own punctuation and number
+  formatting (full-width marks for Chinese, ASCII for English).
+- **Nothing to download.** The 228 MB model is bundled, so the first dictation works
+  offline straight after install. The installer is correspondingly larger and is now
+  served from GitHub Releases; the website download button redirects there.
 
-## Two recognition modes
+Apple's recognizer is still available as the new **Native** mode for people who only
+dictate in their system language; **Accuracy** (Whisper) is unchanged.
 
-Choose your engine in **Privacy & Local AI**:
+Also in this release: a fix for a rare case where the app could stay stuck on
+"processing" if the model failed to load while you were already holding the key.
 
-- **Speed (default)** — Apple's native on-device recognition. Near-instant, the
-  lightest option, with zero extra downloads.
-- **Accuracy** — Whisper (large-v3 turbo). More accurate for English and technical or
+## Three recognition modes
+
+Choose your engine in **Speed & Accuracy**:
+
+- **Speed (default)** — SenseVoice, bundled. Multilingual with automatic language
+  detection, including mixed Chinese and English. Near-instant.
+- **Accuracy** — Whisper (large-v3 turbo). An alternative for English and technical or
   specialized content. The model downloads once on first use, then works fully offline.
+- **Native** — Apple's on-device recognizer. No model files, but it only understands
+  your Mac's system language.
 
 Either way, everything runs on your Mac.
 

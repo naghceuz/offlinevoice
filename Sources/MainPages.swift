@@ -311,7 +311,7 @@ struct PrivacyLocalAIView: View {
         ) {
             SectionCard(
                 "Recognition mode",
-                subtitle: "Faster modes feel instant. Slower modes recognize English and technical speech more accurately."
+                subtitle: "Speed understands several languages and mixed speech out of the box. Accuracy tries Whisper instead. Native uses Apple's recognizer, which only knows your system language."
             ) {
                 VStack(spacing: 12) {
                     ForEach(RecognitionMode.allCases) { mode in

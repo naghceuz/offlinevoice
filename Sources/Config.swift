@@ -3,7 +3,8 @@ import Foundation
 /// Engine-level configuration derived from the user's `RecognitionMode`. Kept as
 /// a small bridge so the ASR backends don't depend on the whole settings store.
 struct Config: Codable {
-    /// "whisperkit" (on-device, zero setup) or "sensevoice" (local service, see service/).
+    /// "sensevoice" (bundled, multilingual), "apple" (system-locale only) or
+    /// "whisperkit" (downloads on first use).
     var asrEngine: String
     var whisperModel: String
     /// "auto" detects language; set "zh" to lock Chinese (fewer English mis-hears).

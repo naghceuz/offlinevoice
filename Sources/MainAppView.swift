@@ -255,7 +255,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 18) {
             Text("Local engine")
                 .font(.largeTitle.weight(.bold))
-            Text("Transcription runs entirely on your Mac. The default Speed mode uses Apple's on-device recognition for near-instant results.")
+            Text("Transcription runs entirely on your Mac. The default Speed mode uses a multilingual model bundled with the app: it detects Chinese, English, Japanese, Korean and Cantonese by itself — including mixed Chinese and English in one sentence.")
                 .font(.title3)
                 .foregroundStyle(.secondary)
             StatusPill(
@@ -263,7 +263,7 @@ struct OnboardingView: View {
                 systemImage: appState.isModelReady ? "checkmark.circle.fill" : "arrow.down.circle",
                 color: appState.isModelReady ? .green : Brand.yellow
             )
-            Text("Prefer accuracy for English or technical speech? Switch to Accuracy mode (Whisper) any time in Speed & Accuracy.")
+            Text("Want to try Whisper for English or technical speech, or Apple's own recognizer for your system language only? Switch modes any time in Speed & Accuracy.")
                 .foregroundStyle(.secondary)
         }
         .padding(48)

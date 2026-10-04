@@ -22,12 +22,10 @@ never leave the machine). On a fresh machine, redo both before step 4:
   ```
   Only if that errors do you need to re-store credentials (README →
   "Signing & notarizing for public distribution").
-- **Website deploy state** (gitignored, so also missing on a fresh clone):
-  `website/public/downloads/OfflineVoice-mac.dmg` + `.sha256` — restore the
-  current release from GitHub (`gh release download vX.Y.Z --dir
-  website/public/downloads`) **before any Vercel deploy**, or the live download
-  link 404s. Then `cd website && npx vercel login && npx vercel link` to re-attach
-  the `owens-projects-ba5444b1/website` project.
+- **Vercel CLI login + project link** (gitignored `website/.vercel/`): on a fresh
+  machine `cd website && npx vercel login && npx vercel link` to re-attach the
+  `owens-projects-ba5444b1/website` project. The website no longer hosts the
+  DMG (see step 6/7), so there is nothing else to restore.
 
 ## 1. Bump the version
 
@@ -37,9 +35,11 @@ Edit `project.yml` (macOS target only, three spots):
 - `settings.base.MARKETING_VERSION`
 - `settings.base.CURRENT_PROJECT_VERSION` (increment by 1)
 
-Then regenerate the Xcode project + Info.plist:
+Then fetch/verify the bundled speech model and regenerate the Xcode project +
+Info.plist (the model directory must exist before XcodeGen runs):
 
 ```bash
+./scripts/fetch-models.sh   # no-op when the pinned files are already verified
 xcodegen generate
 ```
 
@@ -66,35 +66,40 @@ NOTARY_PROFILE="OfflineVoice-Notary" \
 ```
 
 This writes the notarized, stapled DMG + `.sha256` to
-`website/public/downloads/OfflineVoice-mac.dmg` (the file the website serves).
-Notarization waits on Apple and typically takes a few minutes. Verify:
+`dist/release/OfflineVoice-mac.dmg` (≈ 230 MB: the SenseVoice model is inside
+the app). Notarization waits on Apple and typically takes a few minutes. Verify:
 
 ```bash
-xcrun stapler validate website/public/downloads/OfflineVoice-mac.dmg
+xcrun stapler validate dist/release/OfflineVoice-mac.dmg
 ```
 
 ## 5. Commit & push
 
-Commit source + docs, then push `main`. Note the DMG itself is **gitignored**
-(`website/public/downloads/` — "built locally, not source"); it reaches users
-via the Vercel deploy (step 7, which uploads local files regardless of
-gitignore) and the GitHub Release assets (step 6), never via git.
+Commit source + docs, then push `main`. The DMG itself is **gitignored**
+(`dist/`); it reaches users only as a GitHub Release asset (step 6).
 
 ## 6. GitHub Release
 
 ```bash
 git tag vX.Y.Z && git push origin vX.Y.Z
 gh release create vX.Y.Z \
-  website/public/downloads/OfflineVoice-mac.dmg \
-  website/public/downloads/OfflineVoice-mac.dmg.sha256 \
+  dist/release/OfflineVoice-mac.dmg \
+  dist/release/OfflineVoice-mac.dmg.sha256 \
   --title "OfflineVoice vX.Y.Z" \
   --notes-file RELEASE_NOTES.md
 ```
 
-## 7. Deploy the website (serves the new DMG)
+**This step is what ships the download.** `www.offlinevoice.ai/api/download`
+counts the click and redirects to
+`github.com/naghceuz/offlinevoice/releases/latest/download/OfflineVoice-mac.dmg`,
+which always resolves to the newest release — no website deploy is needed for
+users to get the new build. Mark the release as the latest (the default).
 
-Production deploys go through the Vercel CLI from `website/` — this is the
-step that actually updates what users download from offlinevoice.ai:
+## 7. Deploy the website (only if the site itself changed)
+
+The site does not serve the DMG any more, so this is only needed when
+`website/` changed (copy, version string in the footer, …). Production deploys
+go through the Vercel CLI from `website/`:
 
 ```bash
 cd website && npx vercel --prod

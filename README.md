@@ -40,23 +40,25 @@ The current repo contains two deliverables:
 - First-run onboarding for positioning, permissions, and the hotkey.
 - Main window with Home, Settings, Shortcuts, Privacy & Local AI, and About pages.
 - Global push-to-talk with default `Right Option`, editable from the app UI.
-- Microphone, Speech Recognition, and Accessibility permission status with settings shortcuts.
-- Two on-device recognition modes you choose from the Privacy & Local AI page:
-  - **Speed** (default): Apple's native on-device speech recognition. Near-instant — text appears almost as soon as you stop talking — and the most lightweight option, with zero extra downloads.
-  - **Accuracy**: Whisper (large-v3 turbo) for more accurate English and technical or specialized content. The model downloads once to your machine on first use, then works offline.
+- Microphone and Accessibility permission status with settings shortcuts (Speech Recognition is only requested by Native mode).
+- Three on-device recognition modes you choose from the Speed & Accuracy page:
+  - **Speed** (default): SenseVoiceSmall, bundled inside the app. One model that detects Chinese (Mandarin and Cantonese), English, Japanese and Korean by itself — including mixed Chinese/English in a single sentence — with punctuation. Nothing to download, nothing to configure.
+  - **Accuracy**: Whisper (large-v3 turbo), an alternative for English and technical or specialized content. The model downloads once to your machine on first use, then works offline.
+  - **Native**: Apple's built-in on-device recognizer. No model files, but it is bound to your Mac's system language and cannot follow a language switch.
 - Works in any app: the recognized text is pasted into the focused input field.
 - Website landing page for the "fastest local voice dictation for Mac" positioning.
-- Real website download path at `/downloads/OfflineVoice-mac.dmg`.
-- DMG packaging script: a Developer ID build is written to `website/public/downloads/`, while an unsigned local build goes to `dist/local-preview/`.
+- Website download button goes through `/api/download` (counted) and redirects to the latest GitHub Release asset.
+- DMG packaging script: a Developer ID build is written to `dist/release/` for `gh release create`, while an unsigned local build goes to `dist/local-preview/`.
 
 ## Requirements
 
 - macOS 13+
 - Xcode
 - Node.js 20+ for the website
-- Optional: [XcodeGen](https://github.com/yonaskolb/XcodeGen) if regenerating `OfflineVoice.xcodeproj` from `project.yml`
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen) to regenerate `OfflineVoice.xcodeproj` from `project.yml`
+- `scripts/fetch-models.sh` once per checkout: it downloads the pinned SenseVoice model (228 MB, SHA-256 verified) into the gitignored `Resources/models/` folder that gets bundled into the app. See `Resources/SenseVoice-NOTICE.md` for the model's provenance and licence.
 
-Speed mode uses Apple's built-in on-device speech recognition and needs no downloads. Accuracy mode downloads the Whisper model on first use and caches it locally for offline use afterwards.
+Speed mode's model ships inside the app, so nothing is downloaded at runtime. Accuracy mode downloads the Whisper model on first use and caches it locally for offline use afterwards. Native mode needs no files but only recognizes the system language.
 
 ## Local Website Development
 
@@ -104,6 +106,7 @@ https://website-owens-projects-ba5444b1.vercel.app
 ## Build the Mac App
 
 ```bash
+./scripts/fetch-models.sh   # once; verifies the bundled speech model
 xcodegen generate
 xcodebuild \
   -project OfflineVoice.xcodeproj \
@@ -120,7 +123,7 @@ The app is created at:
 build/Build/Products/Release/OfflineVoice.app
 ```
 
-If you only changed Swift files, `xcodegen generate` is usually not required. Run it after changing `project.yml`, assets, bundle settings, package dependencies, or Info.plist generation settings.
+If you only changed Swift files, `xcodegen generate` is usually not required. Run it after changing `project.yml`, assets, bundle settings, package dependencies, or Info.plist generation settings. The model folder must exist before XcodeGen runs (it is a folder reference), which is why `fetch-models.sh` comes first.
 
 ## Generate the Installer DMG
 
@@ -172,13 +175,12 @@ npm run dev
 Then verify:
 
 1. Open the local website.
-2. Click **Download for Mac** and confirm `/downloads/OfflineVoice-mac.dmg` downloads.
+2. Click **Download for Mac** and confirm it redirects to the GitHub Release DMG.
 3. Open the DMG and drag `OfflineVoice.app` to Applications, or open it from the mounted image for a quick smoke test.
 4. Approve any macOS security prompts on first launch.
 5. Approve Microphone access.
-6. Approve Speech Recognition access for Speed mode.
-7. Use the menu-bar icon to open Accessibility settings if needed, then enable OfflineVoice.
-8. Put the cursor in any input field, hold `Right Option`, speak, and release.
+6. Use the menu-bar icon to open Accessibility settings if needed, then enable OfflineVoice.
+7. Put the cursor in any input field, hold `Right Option`, speak, and release.
 
 ## First-Run Permissions
 
@@ -189,16 +191,15 @@ Users should:
 1. Open `OfflineVoice.app`.
 2. Complete the onboarding window.
 3. Approve Microphone access when macOS asks.
-4. Approve Speech Recognition access for Speed mode (Apple's on-device recognizer).
-5. Open Accessibility settings from onboarding or Home if shown, then enable OfflineVoice.
-6. Confirm the default shortcut or record a new shortcut in Settings.
-7. Put the cursor in any text field, hold the shortcut, speak, and release.
+4. Open Accessibility settings from onboarding or Home if shown, then enable OfflineVoice.
+5. Confirm the default shortcut or record a new shortcut in Settings.
+6. Put the cursor in any text field, hold the shortcut, speak, and release.
 
-Microphone and Speech Recognition are required for on-device transcription. Accessibility is required for the global push-to-talk key and automatic paste.
+Microphone access is required for transcription (Native mode additionally asks for Speech Recognition access). Accessibility is required for the global push-to-talk key and automatic paste.
 
 ## App Settings
 
-OfflineVoice v0.4.0 stores user settings at:
+OfflineVoice v0.5.0 stores user settings at:
 
 ```text
 ~/.config/offlinevoice/config.json
@@ -251,8 +252,8 @@ setting neither falls back to the ad-hoc build.
 
 ## Temporary Choices and Follow-Ups
 
-- The public download is a checked-in/static file under `website/public/downloads/`.
-- Translate and Ask Anything are visible as future shortcut modes but disabled in v0.4.0.
+- The public download is a GitHub Release asset; the website only counts and redirects.
+- Translate and Ask Anything are visible as future shortcut modes but disabled in v0.5.0.
 - Launch at login uses `SMAppService`.
 - Switching recognition mode from the UI is persisted and reloads the engine in place.
 - The website product preview is a designed placeholder until real screenshots or a screen recording are captured.

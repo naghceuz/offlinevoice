@@ -16,11 +16,13 @@ ENTITLEMENTS="$ROOT_DIR/Resources/OfflineVoice.entitlements"
 DEVELOPER_ID_IDENTITY="${DEVELOPER_ID_IDENTITY:-}"
 NOTARY_PROFILE="${NOTARY_PROFILE:-}"
 
-# Only a Developer ID build may write the public download the website serves.
-# An ad-hoc (unsigned) build goes to a local-preview path and never touches the
-# notarized DMG that users download.
+# A Developer ID build is the release artifact: it goes to dist/release/ and is
+# published as a GitHub Release asset (the website's /api/download redirects
+# there — the DMG is far too large for Vercel's upload limit now that the speech
+# model ships inside the app). An ad-hoc (unsigned) build goes to a separate
+# local-preview path so it can never be mistaken for the release.
 if [[ -n "$DEVELOPER_ID_IDENTITY" ]]; then
-  OUTPUT_DIR="$ROOT_DIR/website/public/downloads"
+  OUTPUT_DIR="$DIST_DIR/release"
   DMG_PATH="$OUTPUT_DIR/OfflineVoice-mac.dmg"
 else
   OUTPUT_DIR="$DIST_DIR/local-preview"
@@ -28,6 +30,11 @@ else
 fi
 
 cd "$ROOT_DIR"
+
+# Build order: verified model files → regenerate the project → build. The model
+# is bundled as a folder reference, so it must be on disk before the build.
+"$ROOT_DIR/scripts/fetch-models.sh"
+xcodegen generate
 
 xcodebuild \
   -project OfflineVoice.xcodeproj \

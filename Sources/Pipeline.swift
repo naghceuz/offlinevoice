@@ -20,6 +20,11 @@ final class Pipeline {
     /// (likely a wrong/busy input device), `false` to clear a prior warning.
     var onAudioInputWarning: (Bool) -> Void = { _ in }
     private(set) var isModelReady = false
+    /// True while `prewarm()` is in flight. `finish()` uses it to tell "model is
+    /// still loading, queue the audio" apart from "the load already failed":
+    /// queuing in the second case would leave the pipeline in `.processing`
+    /// forever, because no load task exists to flush the queue.
+    private var isModelLoading = false
     private(set) var state: State = .idle
 
     private let recorder = AudioRecorder()
@@ -93,7 +98,9 @@ final class Pipeline {
     /// doesn't pay the download/load cost.
     func prewarm() {
         transition(to: .loadingModel)
+        isModelLoading = true
         Task {
+            defer { isModelLoading = false }
             do {
                 try await asr.prepare()
                 isModelReady = true
@@ -146,14 +153,35 @@ final class Pipeline {
         }
     }
 
+    /// How long to keep capturing after the key is released. People release
+    /// the push-to-talk key on the last syllable, not after it, so stopping
+    /// instantly clips the final word ("mix" → "m"). A third of a second
+    /// covers the tail of a word without feeling laggy.
+    private let releaseTail: TimeInterval = 0.35
+    private var finishPending = false
+
     func finish() {
         // Ignore stray releases / double finishes; only a live recording can finish.
-        guard state == .recording else {
-            Log.write("finish ignored, state=\(state)")
+        guard state == .recording, !finishPending else {
+            Log.write("finish ignored, state=\(state) pending=\(finishPending)")
             return
         }
+        finishPending = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + releaseTail) { [weak self] in
+            self?.completeFinish()
+        }
+    }
+
+    private func completeFinish() {
+        finishPending = false
+        guard state == .recording else { return }
         let samples = recorder.stop()
         Log.write("recording stopped, samples=\(samples.count) (min=\(minSamples))")
+        #if DEBUG
+        // Dev builds keep the raw capture so a mis-recognition can be replayed
+        // through the engines offline (see scripts/ and the svbench harness).
+        CaptureDump.write(samples)
+        #endif
         guard samples.count >= minSamples else {
             Log.write("too few samples, ignoring")
             // Return to whichever resting state matches model readiness.
@@ -179,7 +207,15 @@ final class Pipeline {
             // Captured during the cold-start window: hold the audio and stay in
             // .processing (spinner). prewarm()'s completion flushes it.
             pendingSamples = samples
-            Log.write("queued recording, awaiting model")
+            if isModelLoading {
+                Log.write("queued recording, awaiting model")
+            } else {
+                // The load already failed (e.g. mid-recording). Nothing would ever
+                // flush the queue, so retry the load now; its completion either
+                // transcribes the queued audio or drops it and returns to idle.
+                Log.write("queued recording, model not loading — retrying prewarm")
+                prewarm()
+            }
             return
         }
         transcribeAndPaste(samples)

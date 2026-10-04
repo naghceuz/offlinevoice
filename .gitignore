@@ -18,6 +18,9 @@ FuckTypeless.xcodeproj/
 # Generated intermediate for Resources/OfflineVoice.icns
 Resources/OfflineVoice.iconset/
 
+# ── Bundled SenseVoice model (228 MB), fetched by scripts/fetch-models.sh ──
+Resources/models/
+
 # ── SenseVoice service: Python env + downloaded model (1.9 GB) ──
 service/.venv/
 service/models/
