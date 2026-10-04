@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/downloads/OfflineVoice-mac.dmg",
+      "destination": "/api/download",
+      "permanent": false
+    },
+    {
+      "source": "/downloads/OfflineVoice-mac.dmg.sha256",
+      "destination": "https://github.com/naghceuz/offlinevoice/releases/latest/download/OfflineVoice-mac.dmg.sha256",
+      "permanent": false
+    }
+  ]
+}

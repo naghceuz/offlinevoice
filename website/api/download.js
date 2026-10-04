@@ -1,8 +1,16 @@
 import { Redis } from "@upstash/redis";
 
-// The real installer lives as a static file under public/. We redirect to it
-// after counting so the download itself never depends on the counter working.
-const DMG_PATH = "/downloads/OfflineVoice-mac.dmg";
+// The installer is published as a GitHub Release asset — it is far too large
+// for Vercel's per-file upload limit now that the speech model ships inside
+// the app. We count the download here, then redirect to GitHub so the
+// download itself never depends on the counter working.
+//
+// `releases/latest/download/<asset>` always resolves to the newest release, so
+// a release only needs `gh release create` — no website deploy. Override with
+// DMG_URL (e.g. to pin a specific tag) if ever needed.
+const DMG_URL =
+  process.env.DMG_URL ||
+  "https://github.com/naghceuz/offlinevoice/releases/latest/download/OfflineVoice-mac.dmg";
 
 // Lazily build the Redis client so a missing/unconfigured KV store degrades
 // gracefully (downloads still work) instead of throwing at import time.
@@ -30,7 +38,8 @@ export default async function handler(req, res) {
     console.error("download counter failed", err);
   }
 
-  res.setHeader("Location", DMG_PATH);
+  res.setHeader("Location", DMG_URL);
+  res.setHeader("Cache-Control", "no-store");
   res.statusCode = 302;
   res.end();
 }

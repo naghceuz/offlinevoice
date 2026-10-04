@@ -28,7 +28,7 @@ import {
 
 const navItems = ["Why OfflineVoice", "Speed", "Privacy", "How it works", "FAQ"];
 // Routes through the /api/download serverless function so each download is
-// counted, then 302-redirects to the real .dmg under /downloads/.
+// counted, then 302-redirects to the .dmg on GitHub Releases.
 const downloadHref = "/api/download";
 const githubHref = "https://github.com/naghceuz/offlinevoice";
 
@@ -89,7 +89,7 @@ const whyItems = [
   },
   {
     title: "100% on-device",
-    body: "Speech recognition runs locally with Apple on-device speech or optional Whisper. No cloud, no account, no subscription.",
+    body: "Speech recognition runs locally with a multilingual model bundled in the app, or optional Whisper. No cloud, no account, no subscription.",
     icon: ShieldCheck,
   },
 ];
@@ -104,7 +104,7 @@ const recognitionModes = [
   {
     title: "Speed",
     badge: "Default",
-    body: "Apple's native on-device speech recognition. Near-instant, lightweight, and zero extra downloads.",
+    body: "A bundled on-device model that detects Chinese, English, Japanese, Korean and Cantonese by itself — mixed Chinese and English included. Near-instant, nothing to download.",
     icon: Zap,
   },
   {
@@ -432,7 +432,7 @@ export function App() {
             <article>
               <AudioWaveform size={28} />
               <h3>Transcribe on-device</h3>
-              <p>Recognition runs locally — Apple on-device speech, or optional Whisper.</p>
+              <p>Recognition runs locally — a bundled multilingual model, or optional Whisper.</p>
             </article>
             <article>
               <Cpu size={28} />
@@ -487,8 +487,9 @@ export function App() {
             <div className="section-kicker">No internet required</div>
             <h2>No internet required. Built to keep working when the network does not.</h2>
             <p>
-              Dictation runs on your machine. Speed mode works out of the box; the
-              optional Whisper model downloads once, then runs offline too. Fewer
+              Dictation runs on your machine. Speed mode ships with its model and
+              works out of the box; the optional Whisper model downloads once,
+              then runs offline too. Fewer
               privacy tradeoffs, and fewer broken writing sessions.
             </p>
           </div>
@@ -542,11 +543,11 @@ export function App() {
             </details>
             <details>
               <summary>What's the difference between Speed and Accuracy?</summary>
-              <p>Speed (the default) uses Apple's native on-device recognition — near-instant and zero extra downloads. Accuracy uses Whisper (large-v3 turbo) for sharper results on English and technical content; it downloads once, then runs offline.</p>
+              <p>Speed (the default) uses SenseVoice, a multilingual model bundled inside the app: it recognizes Chinese, English, Japanese, Korean and Cantonese without being told which one — even mixed Chinese and English in one sentence — and is near-instant. Accuracy uses Whisper (large-v3 turbo) as an alternative for English and technical content; it downloads once, then runs offline. Native uses Apple's own recognizer, which only understands your Mac's system language.</p>
             </details>
             <details>
               <summary>Does it need the internet?</summary>
-              <p>No. Recognition runs on your Mac. Speed mode works immediately; the optional Whisper model downloads once and then runs fully offline.</p>
+              <p>No. Recognition runs on your Mac. Speed mode works immediately with the model that ships in the app; the optional Whisper model downloads once and then runs fully offline.</p>
             </details>
             <details>
               <summary>Is the download safe to open?</summary>
@@ -579,11 +580,13 @@ export function App() {
             </p>
             <h3>Local AI models</h3>
             <p>
-              Transcription runs on-device. Speed mode uses Apple's built-in
-              on-device speech recognition. Accuracy mode uses Whisper (large-v3
-              turbo); the first time you use it the model is downloaded from its
-              public host and then cached locally for offline use. None of this
-              sends your speech or text off the device.
+              Transcription runs on-device. Speed mode uses SenseVoice, a model
+              that ships inside the app (see the NOTICE file in the app bundle
+              for its licence). Accuracy mode uses Whisper (large-v3 turbo); the
+              first time you use it the model is downloaded from its public host
+              and then cached locally for offline use. Native mode uses Apple's
+              built-in recognizer. None of this sends your speech or text off
+              the device.
             </p>
             <h3>Permissions</h3>
             <p>
@@ -607,7 +610,7 @@ export function App() {
         <footer className="site-footer">
           <BrandMark compact />
           <span>OfflineVoice.ai</span>
-          <p>v0.4.0 · The fastest local voice dictation for Mac. Free &amp; open source (GPL-3.0).</p>
+          <p>v0.5.0 · The fastest local voice dictation for Mac. Free &amp; open source (GPL-3.0).</p>
           <p className="footer-links">
             <a href="#privacy-policy">Privacy Policy</a>
             <a href={githubHref} target="_blank" rel="noreferrer">
