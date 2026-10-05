@@ -20,6 +20,13 @@ jobs:
       - name: Create ignored model resource directory
         run: mkdir -p Resources/models
 
+      - name: Generate Xcode project
+        run: |
+          if ! command -v xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+          xcodegen generate
+
       - name: Run unit tests
         run: |
           set -euo pipefail
