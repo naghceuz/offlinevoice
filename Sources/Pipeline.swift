@@ -16,6 +16,10 @@ final class Pipeline {
     var onPasteNeedsAccessibility: () -> Void = { }
     /// Real-time mic level (0...1) during recording, for the waveform HUD.
     var onAudioLevel: (Float) -> Void = { _ in }
+    /// Fired (on main) when the first audio buffer of a capture arrives — the
+    /// microphone is genuinely open. The HUD shows the recording waveform on
+    /// this rather than on the key press.
+    var onCaptureBegan: () -> Void = { }
     /// Fired after a recording finishes: `true` when the capture was near-silent
     /// (likely a wrong/busy input device), `false` to clear a prior warning.
     var onAudioInputWarning: (Bool) -> Void = { _ in }
@@ -28,6 +32,8 @@ final class Pipeline {
     private(set) var state: State = .idle
 
     private let recorder = AudioRecorder()
+    /// Speech/no-speech gate run on every capture before transcription.
+    private let speechGate = SpeechGate()
     private var asr: ASREngine
     private let settingsStore: SettingsStore
     /// Signature of the ASR-relevant settings backing the current `asr` instance.
@@ -53,6 +59,29 @@ final class Pipeline {
         // hop to main where the (MainActor) callback updates UI.
         recorder.onLevel = { [weak self] level in
             DispatchQueue.main.async { self?.onAudioLevel(level) }
+        }
+        recorder.onCaptureBegan = { [weak self] in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if let pressed = self.pressTime {
+                    Log.write("capture began +\(Int((CFAbsoluteTimeGetCurrent() - pressed) * 1000)) ms after press")
+                }
+                self.onCaptureBegan()
+            }
+        }
+    }
+
+    /// When the current recording was requested; for the press→audio metric.
+    private var pressTime: CFAbsoluteTime?
+
+    /// Does the slow part of opening the microphone now, so the next hotkey
+    /// press only has to start the I/O. Called after the model is ready and
+    /// whenever the preferred input device changes.
+    func prepareRecorder() {
+        do {
+            try recorder.prepare(preferredDeviceUID: settingsStore.settings.preferredInputDeviceUID)
+        } catch {
+            Log.write("recorder prepare failed (will retry on next press): \(error)")
         }
     }
 
@@ -107,6 +136,10 @@ final class Pipeline {
                 onModelReadyChange(true)
                 onModelLoadFailed(nil)
                 Log.write("prewarm done, model ready")
+                prepareRecorder()
+                // Best-effort: a gate that fails to load must not block dictation;
+                // transcribeAndPaste() fails open in that case.
+                try? await speechGate.prepare()
             } catch {
                 Log.write("model prewarm failed: \(error)")
                 isModelReady = false
@@ -142,9 +175,10 @@ final class Pipeline {
             Log.write("startRecording ignored, state=\(state)")
             return
         }
+        pressTime = CFAbsoluteTimeGetCurrent()
         do {
             try recorder.start(preferredDeviceUID: settingsStore.settings.preferredInputDeviceUID)
-            Log.write("recording started (modelReady=\(isModelReady))")
+            Log.write("recording started (modelReady=\(isModelReady)) +\(Int((CFAbsoluteTimeGetCurrent() - pressTime!) * 1000)) ms")
             transition(to: .recording)
         } catch {
             Log.write("failed to start recording: \(error)")
@@ -230,9 +264,19 @@ final class Pipeline {
         let currentSettings = settingsStore.settings
 
         let engine = asr
+        let gate = speechGate
         Task {
             defer { transition(to: .idle) }
             do {
+                // Speech models hallucinate on noise ("The.", "你。"); a hotkey tap
+                // with nothing said must paste nothing. Fail open if the VAD
+                // itself is unavailable — losing a dictation is worse than an
+                // occasional stray word.
+                let gateStart = CFAbsoluteTimeGetCurrent()
+                if let hasSpeech = try? await gate.containsSpeech(samples), !hasSpeech {
+                    Log.write("no speech detected (VAD, \(Int((CFAbsoluteTimeGetCurrent() - gateStart) * 1000)) ms), nothing to transcribe")
+                    return
+                }
                 let raw = try await engine.transcribe(samples)
                 // Privacy: never log the transcript itself, only its length.
                 Log.write("transcribed chars=\(raw.count)")

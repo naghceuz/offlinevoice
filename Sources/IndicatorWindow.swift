@@ -11,6 +11,9 @@ final class IndicatorController {
     private let messageIcon = NSImageView()
     private let messageLabel = NSTextField(labelWithString: "No sound reached mic")
     private let messageStack = NSStackView()
+    /// Shown between the key press and the first audio buffer: the mic is being
+    /// opened but nothing is captured yet, so no waveform — a static mic glyph.
+    private let openingIcon = NSImageView()
     private let size = NSSize(width: 96, height: 40)
     /// Wider capsule used only for the transient "no sound" message.
     private let messageSize = NSSize(width: 230, height: 40)
@@ -69,7 +72,16 @@ final class IndicatorController {
         messageStack.isHidden = true
         container.addSubview(messageStack)
 
+        openingIcon.image = NSImage(systemSymbolName: "mic", accessibilityDescription: "Opening microphone")
+        openingIcon.contentTintColor = NSColor.white.withAlphaComponent(0.55)
+        openingIcon.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: 15, weight: .medium)
+        openingIcon.translatesAutoresizingMaskIntoConstraints = false
+        openingIcon.isHidden = true
+        container.addSubview(openingIcon)
+
         NSLayoutConstraint.activate([
+            openingIcon.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            openingIcon.centerYAnchor.constraint(equalTo: container.centerYAnchor),
             spinner.centerXAnchor.constraint(equalTo: container.centerXAnchor),
             spinner.centerYAnchor.constraint(equalTo: container.centerYAnchor),
             messageStack.centerXAnchor.constraint(equalTo: container.centerXAnchor),
@@ -79,9 +91,24 @@ final class IndicatorController {
         panel.contentView = container
     }
 
+    /// Key pressed, microphone not yet delivering audio. Acknowledges the press
+    /// instantly without pretending to record: the waveform only appears from
+    /// `showRecording()`, which the pipeline calls on the first audio buffer.
+    func showOpening() {
+        endNoAudio()
+        panel.setContentSize(size)
+        bars.isHidden = true
+        bars.stop()
+        spinner.isHidden = true
+        spinner.stopAnimation(nil)
+        openingIcon.isHidden = false
+        present()
+    }
+
     func showRecording() {
         endNoAudio()
         panel.setContentSize(size)
+        openingIcon.isHidden = true
         bars.isHidden = false
         bars.start()
         spinner.isHidden = true
@@ -98,6 +125,7 @@ final class IndicatorController {
     func showProcessing() {
         endNoAudio()
         panel.setContentSize(size)
+        openingIcon.isHidden = true
         bars.isHidden = true
         bars.stop()
         spinner.isHidden = false
@@ -108,6 +136,7 @@ final class IndicatorController {
     /// Briefly takes over the HUD to say a recording captured no audio, then hides
     /// itself. Survives the immediate `.idle` hide() via `showingNoAudio`.
     func showNoAudio() {
+        openingIcon.isHidden = true
         bars.isHidden = true
         bars.stop()
         spinner.isHidden = true

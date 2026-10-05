@@ -16,6 +16,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var healthTimer: Timer?
     private var didPromptAccessibilityForPaste = false
     private var hotkeyStarted = false
+    /// True from the first audio buffer of a capture until the recording ends,
+    /// so a re-render mid-recording keeps the waveform instead of the glyph.
+    private var captureActive = false
     private var cancellables = Set<AnyCancellable>()
 
     private enum Tag: Int { case status = 1, shortcut = 2, accessibility = 3, mic = 4 }
@@ -45,6 +48,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         pipeline.onAudioLevel = { [weak self] level in
             self?.indicator.updateLevel(level)
         }
+        pipeline.onCaptureBegan = { [weak self] in
+            // Audio is really flowing now: switch from the "opening mic" glyph to
+            // the live waveform. This is the user's cue to start talking.
+            self?.captureActive = true
+            self?.indicator.showRecording()
+        }
         pipeline.onAudioInputWarning = { [weak self] lowSignal in
             guard let self else { return }
             self.appState.audioInputWarning = lowSignal
@@ -71,12 +80,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotkey.shortcut = settingsStore.settings.primaryShortcut
         hotkey.onPress = { [weak self] in
             guard let self else { return }
-            // Acknowledge the keypress *instantly*. The audio engine cold-starts
-            // in 70–550 ms and `render(.recording)` only fires after it succeeds,
-            // so the HUD used to lag behind the press and the user assumed it
-            // missed. We now capture audio even while the model loads (finish()
-            // queues it), so show the recording waveform the moment the key drops.
-            self.indicator.showRecording()
+            // Acknowledge the keypress instantly, but honestly: the HUD shows an
+            // "opening microphone" glyph now and the recording waveform only once
+            // the first audio buffer arrives (pipeline.onCaptureBegan). Showing
+            // the waveform on the press made people start talking during the
+            // engine start-up and lose their first word.
+            self.indicator.showOpening()
             self.pipeline.startRecording()
         }
         hotkey.onRelease = { [weak self] in
@@ -132,6 +141,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.hotkey.shortcut = settings.primaryShortcut
                 self.updateStatusItemVisibility()
                 self.pipeline?.reloadEngineIfNeeded()
+                // A different input device means a different prepared graph.
+                self.pipeline?.prepareRecorder()
                 self.render(self.appState.pipelineState)
             }
             .store(in: &cancellables)
@@ -231,8 +242,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem?.menu?.item(withTag: Tag.shortcut.rawValue)?.title =
             "Hold \(settingsStore.settings.primaryShortcut.displayName) to dictate"
 
+        if state != .recording { captureActive = false }
         switch state {
-        case .recording:  indicator.showRecording()
+        // `.recording` is entered when engine.start() returns, which can still be
+        // before any audio arrives; keep the glyph until onCaptureBegan fires.
+        case .recording:  captureActive ? indicator.showRecording() : indicator.showOpening()
         case .processing: indicator.showProcessing()
         case .idle, .loadingModel: indicator.hide()
         }
