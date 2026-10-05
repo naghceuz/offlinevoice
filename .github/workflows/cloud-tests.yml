@@ -33,6 +33,9 @@ jobs:
           path: ${{ runner.temp }}/SourcePackages
           key: swift-packages-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('OfflineVoice.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
+      - name: Test acceptance metrics
+        run: python3 -m unittest discover -s scripts/tests
+
       - name: Run unit tests
         run: |
           set -euo pipefail
