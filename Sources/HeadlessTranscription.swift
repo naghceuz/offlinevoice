@@ -4,13 +4,19 @@ import Foundation
 struct HeadlessTranscriptionCommand: Equatable {
     let audioURL: URL
 
-    static func parse(arguments: [String]) -> HeadlessTranscriptionCommand? {
+    static func parse(arguments: [String]) throws -> HeadlessTranscriptionCommand? {
         guard let flagIndex = arguments.firstIndex(of: "--transcribe-file") else {
             return nil
         }
         let pathIndex = arguments.index(after: flagIndex)
         guard arguments.indices.contains(pathIndex) else {
-            return nil
+            throw NSError(
+                domain: "OfflineVoice.HeadlessTranscriptionCommand",
+                code: 2,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "--transcribe-file requires a WAV file path."
+                ]
+            )
         }
         return HeadlessTranscriptionCommand(
             audioURL: URL(fileURLWithPath: arguments[pathIndex])

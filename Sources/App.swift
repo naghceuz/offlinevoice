@@ -7,8 +7,12 @@ import Foundation
 @main
 enum Main {
     static func main() {
-        if let command = HeadlessTranscriptionCommand.parse(arguments: CommandLine.arguments) {
-            runHeadless(command)
+        do {
+            if let command = try HeadlessTranscriptionCommand.parse(arguments: CommandLine.arguments) {
+                runHeadless(command)
+            }
+        } catch {
+            terminateHeadless(with: error)
         }
 
         let app = NSApplication.shared
@@ -35,5 +39,11 @@ enum Main {
             }
         }
         dispatchMain()
+    }
+
+    private static func terminateHeadless(with error: Error) -> Never {
+        let message = "OfflineVoice transcription failed: \(error.localizedDescription)\n"
+        FileHandle.standardError.write(Data(message.utf8))
+        Darwin.exit(EXIT_FAILURE)
     }
 }

@@ -64,6 +64,21 @@ def main():
     references_path = resource(resources, "references.json")
     samples = json.loads(references_path.read_text(encoding="utf-8"))["samples"]
 
+    try:
+        malformed = subprocess.run(
+            [str(executable), "--transcribe-file"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        print("FAIL: missing audio path opened or hung the GUI", file=sys.stderr)
+        return 1
+    if malformed.returncode == 0 or "requires a WAV file path" not in malformed.stderr:
+        print("FAIL: missing audio path did not return the expected usage error", file=sys.stderr)
+        return 1
+
     rows = []
     failures = []
     for sample in samples:
