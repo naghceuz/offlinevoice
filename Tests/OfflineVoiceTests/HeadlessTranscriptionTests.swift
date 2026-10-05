@@ -47,6 +47,22 @@ final class HeadlessTranscriptionTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(result.durationMilliseconds, 0)
     }
 
+    func testResultEncodesAsOneJSONLine() throws {
+        let result = HeadlessTranscriptionResult(
+            text: "我们用 OfflineVoice test",
+            durationMilliseconds: 87
+        )
+
+        let line = try HeadlessTranscriptionRunner.jsonLine(for: result)
+        let object = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: Data(line.utf8)) as? [String: Any]
+        )
+
+        XCTAssertTrue(line.hasSuffix("\n"))
+        XCTAssertEqual(object["text"] as? String, "我们用 OfflineVoice test")
+        XCTAssertEqual(object["durationMilliseconds"] as? Int, 87)
+    }
+
     private func makeWav(
         sampleRate: Double,
         channels: AVAudioChannelCount,
