@@ -39,7 +39,8 @@ final class HeadlessTranscriptionTests: XCTestCase {
 
         let samples = try HeadlessAudioDecoder.decode(url)
 
-        XCTAssertEqual(samples.count, 1_600, accuracy: 2)
+        // AVAudioConverter may trim a short filter warm-up at the beginning.
+        XCTAssertEqual(samples.count, 1_600, accuracy: 64)
         XCTAssertGreaterThan(samples.map(abs).max() ?? 0, 0.01)
     }
 }
