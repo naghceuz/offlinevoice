@@ -1,3 +1,4 @@
+import AVFoundation
 import Foundation
 
 struct HeadlessTranscriptionCommand: Equatable {
@@ -13,6 +14,60 @@ struct HeadlessTranscriptionCommand: Equatable {
         }
         return HeadlessTranscriptionCommand(
             audioURL: URL(fileURLWithPath: arguments[pathIndex])
+        )
+    }
+}
+
+enum HeadlessAudioDecoder {
+    static func decode(_ url: URL) throws -> [Float] {
+        let file = try AVAudioFile(forReading: url)
+        let sourceFormat = file.processingFormat
+        guard
+            let targetFormat = AVAudioFormat(
+                commonFormat: .pcmFormatFloat32,
+                sampleRate: 16_000,
+                channels: 1,
+                interleaved: false
+            ),
+            let converter = AVAudioConverter(from: sourceFormat, to: targetFormat),
+            let input = AVAudioPCMBuffer(
+                pcmFormat: sourceFormat,
+                frameCapacity: AVAudioFrameCount(file.length)
+            )
+        else {
+            throw error("Could not prepare audio conversion for \(url.lastPathComponent).")
+        }
+
+        try file.read(into: input)
+        let ratio = targetFormat.sampleRate / sourceFormat.sampleRate
+        let capacity = AVAudioFrameCount(Double(input.frameLength) * ratio) + 1_024
+        guard let output = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: capacity) else {
+            throw error("Could not allocate converted audio for \(url.lastPathComponent).")
+        }
+
+        var suppliedInput = false
+        var conversionError: NSError?
+        converter.convert(to: output, error: &conversionError) { _, status in
+            if suppliedInput {
+                status.pointee = .noDataNow
+                return nil
+            }
+            suppliedInput = true
+            status.pointee = .haveData
+            return input
+        }
+        if let conversionError { throw conversionError }
+        guard let channel = output.floatChannelData?[0] else {
+            throw error("Converted audio contains no samples.")
+        }
+        return Array(UnsafeBufferPointer(start: channel, count: Int(output.frameLength)))
+    }
+
+    private static func error(_ message: String) -> NSError {
+        NSError(
+            domain: "OfflineVoice.HeadlessAudioDecoder",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: message]
         )
     }
 }
