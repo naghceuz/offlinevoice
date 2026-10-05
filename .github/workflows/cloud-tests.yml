@@ -1,0 +1,71 @@
+name: Cloud macOS tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Swift tests on Apple Silicon
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Create ignored model resource directory
+        run: mkdir -p Resources/models
+
+      - name: Generate Xcode project
+        run: |
+          if ! command -v xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+          xcodegen generate
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/SourcePackages
+          key: swift-packages-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('OfflineVoice.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+
+      - name: Test acceptance metrics
+        run: python3 -m unittest discover -s scripts/tests
+
+      - name: Run unit tests
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project OfflineVoice.xcodeproj \
+            -scheme OfflineVoice \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages" \
+            CODE_SIGNING_ALLOWED=NO \
+            test
+
+      - name: Fetch verified SenseVoice model
+        run: ./scripts/fetch-models.sh
+
+      - name: Build app with bundled model
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project OfflineVoice.xcodeproj \
+            -scheme OfflineVoice \
+            -configuration Debug \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Recognize Chinese, English, and mixed speech
+        run: |
+          python3 scripts/run-speech-acceptance.py \
+            --app "$RUNNER_TEMP/DerivedData/Build/Products/Debug/OfflineVoice.app" \
+            --summary "$GITHUB_STEP_SUMMARY"
