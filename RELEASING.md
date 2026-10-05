@@ -66,7 +66,7 @@ NOTARY_PROFILE="OfflineVoice-Notary" \
 ```
 
 This writes the notarized, stapled DMG + `.sha256` to
-`dist/release/OfflineVoice-mac.dmg` (≈ 230 MB: the SenseVoice model is inside
+`dist/release/OfflineVoice-mac.dmg` (≈ 185 MB: the SenseVoice model is inside
 the app). Notarization waits on Apple and typically takes a few minutes. Verify:
 
 ```bash
