@@ -69,6 +69,18 @@ def resource(resources, filename):
     raise FileNotFoundError(f"Bundled acceptance resource is missing: {filename}")
 
 
+def parse_transcription_output(stdout):
+    lines = [line for line in stdout.splitlines() if line.strip()]
+    if len(lines) != 1:
+        raise ValueError(f"expected one JSON line on stdout, got {len(lines)}")
+    output = json.loads(lines[0])
+    text = output.get("text")
+    duration = output.get("durationMilliseconds")
+    if not isinstance(text, str) or not isinstance(duration, int):
+        raise ValueError("JSON output must contain text and durationMilliseconds")
+    return text, duration
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--app", required=True, type=Path)
@@ -113,10 +125,8 @@ def main():
             continue
 
         try:
-            output = json.loads(completed.stdout.strip().splitlines()[-1])
-            hypothesis = output["text"]
-            duration = int(output["durationMilliseconds"])
-        except (IndexError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+            hypothesis, duration = parse_transcription_output(completed.stdout)
+        except (TypeError, ValueError, json.JSONDecodeError) as error:
             failures.append(f'{sample["file"]}: invalid JSON output ({error})')
             rows.append((sample["file"], sample["lang"], "ERROR", "—", completed.stdout.strip()))
             continue
