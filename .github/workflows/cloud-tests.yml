@@ -17,6 +17,9 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Create ignored model resource directory
+        run: mkdir -p Resources/models
+
       - name: Run unit tests
         run: |
           set -euo pipefail
