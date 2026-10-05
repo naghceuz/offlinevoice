@@ -44,3 +44,25 @@ jobs:
             -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages" \
             CODE_SIGNING_ALLOWED=NO \
             test
+
+      - name: Fetch verified SenseVoice model
+        run: ./scripts/fetch-models.sh
+
+      - name: Build app with bundled model
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project OfflineVoice.xcodeproj \
+            -scheme OfflineVoice \
+            -configuration Debug \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/SourcePackages" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Recognize Chinese, English, and mixed speech
+        run: |
+          python3 scripts/run-speech-acceptance.py \
+            --app "$RUNNER_TEMP/DerivedData/Build/Products/Debug/OfflineVoice.app" \
+            --summary "$GITHUB_STEP_SUMMARY"

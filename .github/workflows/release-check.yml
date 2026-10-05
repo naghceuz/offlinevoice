@@ -2,24 +2,33 @@ name: Release package check
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag to check, for example v0.5.0
+        required: true
+        default: v0.5.0
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   check-release:
-    name: Check v0.5.0 on cloud Mac
+    name: Check release on cloud Mac
     runs-on: macos-14
     timeout-minutes: 15
 
     env:
-      RELEASE_TAG: v0.5.0
+      RELEASE_TAG: ${{ inputs.release_tag }}
 
     defaults:
       run:
         shell: bash
 
     steps:
+      - name: Check out acceptance script
+        uses: actions/checkout@v4
+
       - name: Check cloud Mac environment
         run: |
           set -euo pipefail
@@ -97,10 +106,32 @@ jobs:
           echo "f449eb28dc567533d7fa59be34e2abca8784f771850c78a47fb731a31429a1dc  tokens.txt" \
             | shasum -a 256 -c -
 
+      - name: Detect headless speech support
+        id: speech-support
+        run: |
+          version="${RELEASE_TAG#v}"
+          if python3 - "$version" <<'PY'
+          import sys
+          parts = tuple(int(part) for part in sys.argv[1].split("."))
+          raise SystemExit(0 if parts >= (0, 5, 1) else 1)
+          PY
+          then
+            echo "supported=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "supported=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Recognize Chinese, English, and mixed speech
+        if: steps.speech-support.outputs.supported == 'true'
+        run: |
+          python3 scripts/run-speech-acceptance.py \
+            --app "$RUNNER_TEMP/offlinevoice-mount/OfflineVoice.app" \
+            --summary "$GITHUB_STEP_SUMMARY"
+
       - name: Write result summary
         run: |
           {
-            echo "## OfflineVoice v0.5.0 package checks passed"
+            echo "## OfflineVoice $RELEASE_TAG package checks passed"
             echo ""
             echo "- Download and SHA-256 checksum passed."
             echo "- Disk image verification passed."
@@ -108,7 +139,11 @@ jobs:
             echo "- App signature and Gatekeeper assessment passed."
             echo "- App version and bundled model hashes matched."
             echo ""
-            echo "Speech recognition accuracy, microphone, hotkey and text insertion were NOT tested."
+            if [ "${{ steps.speech-support.outputs.supported }}" = "true" ]; then
+              echo "Speech recognition acceptance passed. Microphone, hotkey and text insertion were not tested."
+            else
+              echo "Speech recognition was skipped because $RELEASE_TAG predates the headless test entry point."
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Unmount disk image
