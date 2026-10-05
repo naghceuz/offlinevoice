@@ -1,4 +1,4 @@
-# OfflineVoice v0.5.0
+# OfflineVoice v0.5.1
 
 **The fastest local dictation for Mac.** Private, offline voice input — now in your language, whichever one you're speaking.
 
@@ -10,6 +10,19 @@ the text is pasted at your cursor. Because it runs entirely on your Mac, it's fa
 ⬇️ **Download:** [OfflineVoice-mac.dmg](https://www.offlinevoice.ai/api/download)
 
 ---
+
+## What's new in 0.5.1
+
+**A calmer first launch.** Installing 0.5.0 greeted you with three macOS permission
+dialogs at once — microphone, Accessibility and Input Monitoring — stacked on top of
+the setup window. Setup now asks for one thing at a time: each permission has its own
+screen, the macOS prompt appears by itself when you reach it, and setup moves on as
+soon as the permission is granted. Nothing is requested before you have seen what the
+app is for, and nothing can be skipped by accident.
+
+Also new: a headless `--transcribe-file <wav>` mode used by the project's cloud
+acceptance tests, so every release is checked against real Chinese, English and mixed
+samples on a Mac in CI.
 
 ## What's new in 0.5.0
 
