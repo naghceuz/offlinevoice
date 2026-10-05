@@ -92,4 +92,16 @@ enum HeadlessTranscriptionRunner {
             durationMilliseconds: max(0, Int(elapsed * 1_000))
         )
     }
+
+    static func jsonLine(for result: HeadlessTranscriptionResult) throws -> String {
+        let data = try JSONEncoder().encode(result)
+        guard let json = String(data: data, encoding: .utf8) else {
+            throw NSError(
+                domain: "OfflineVoice.HeadlessTranscriptionRunner",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Could not encode transcription result."]
+            )
+        }
+        return json + "\n"
+    }
 }
