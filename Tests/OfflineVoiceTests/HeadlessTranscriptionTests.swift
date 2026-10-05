@@ -22,6 +22,14 @@ final class HeadlessTranscriptionTests: XCTestCase {
         XCTAssertEqual(command.audioURL.path, "/tmp/mixed speech.wav")
     }
 
+    func testTranscribeFileFlagWithoutPathThrowsUsageError() {
+        XCTAssertThrowsError(
+            try HeadlessTranscriptionCommand.parse(arguments: ["OfflineVoice", "--transcribe-file"])
+        ) { error in
+            XCTAssertTrue(error.localizedDescription.contains("requires a WAV file path"))
+        }
+    }
+
     func testAudioDecoderResamplesStereoWavToSixteenKilohertzMono() throws {
         let url = try makeWav(sampleRate: 8_000, channels: 2, frames: 8_000)
         defer { try? FileManager.default.removeItem(at: url) }
