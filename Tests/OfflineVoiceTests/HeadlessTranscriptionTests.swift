@@ -23,13 +23,12 @@ final class HeadlessTranscriptionTests: XCTestCase {
     }
 
     func testAudioDecoderResamplesStereoWavToSixteenKilohertzMono() throws {
-        let url = try makeWav(sampleRate: 8_000, channels: 2, frames: 800)
+        let url = try makeWav(sampleRate: 8_000, channels: 2, frames: 8_000)
         defer { try? FileManager.default.removeItem(at: url) }
 
         let samples = try HeadlessAudioDecoder.decode(url)
 
-        // AVAudioConverter may trim a short filter warm-up at the beginning.
-        XCTAssertEqual(samples.count, 1_600, accuracy: 64)
+        XCTAssertEqual(samples.count, 16_000, accuracy: 2)
         XCTAssertGreaterThan(samples.map(abs).max() ?? 0, 0.01)
     }
 
