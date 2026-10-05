@@ -3,7 +3,6 @@
 
 import argparse
 import json
-import re
 import subprocess
 import sys
 import unicodedata
@@ -41,9 +40,26 @@ def character_error_rate(reference, hypothesis):
 
 
 def word_error_rate(reference, hypothesis):
-    expected = re.findall(r"[a-z0-9]+", reference.lower())
-    actual = re.findall(r"[a-z0-9]+", hypothesis.lower())
+    expected = word_tokens(reference)
+    actual = word_tokens(hypothesis)
     return edit_distance(expected, actual) / len(expected) if expected else float(bool(actual))
+
+
+def word_tokens(text):
+    tokens = []
+    ascii_word = []
+    for character in text.lower():
+        if character.isascii() and character.isalnum():
+            ascii_word.append(character)
+            continue
+        if ascii_word:
+            tokens.append("".join(ascii_word))
+            ascii_word = []
+        if character.isalnum():
+            tokens.append(character)
+    if ascii_word:
+        tokens.append("".join(ascii_word))
+    return tokens
 
 
 def resource(resources, filename):
