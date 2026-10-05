@@ -1,6 +1,7 @@
 {
   "_note": "Starter benchmark corpus, synthesized via macOS `say` (voices: Tingting zh-CN, Samantha en-US). TTS audio is cleaner than real speech, so absolute WER/CER reads optimistic — these are for RELATIVE comparison across engine configs. Replace/extend with real recordings later.",
   "samples": [
+    { "file": "zh_original.wav", "lang": "zh", "text": "我想试着用一用" },
     { "file": "zh_meeting.wav", "lang": "zh", "text": "今天我们要去开会，讨论产品的下一个版本，记得带上笔记本电脑。" },
     { "file": "zh_tech.wav", "lang": "zh", "text": "请把这个录音模块重构一下，把状态管理和模型加载逻辑解耦。" },
     { "file": "en_meeting.wav", "lang": "en", "text": "Please summarize the meeting notes and send them to the team by tomorrow morning." },

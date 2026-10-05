@@ -22,6 +22,7 @@
 		29B4FD5CF015793EEC983FD4 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */; };
 		2CD07D7F4C65379AE5E1572D /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD40138CB186054732C1952 /* WaveformView.swift */; };
 		2DAA0B0FDD1A2C4EE6671EBB /* CaptureDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8ACD516A5E24735504AC0B /* CaptureDump.swift */; };
+		2E1361E94061DB3A1549348E /* zh_original.wav in Resources */ = {isa = PBXBuildFile; fileRef = FD4222EB3761EDC9E727959D /* zh_original.wav */; };
 		301D2615BDCB591C869E2972 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7D7AACF342B2B0F7DE37B4 /* SharedStore.swift */; };
 		3E585BC3DCCC60ADC9CB9FBF /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC72ED91463EACB807C4D61 /* Config.swift */; };
 		4BF01CCA4C410697C3855123 /* DictationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882F802C063083AC7326A732 /* DictationViewModel.swift */; };
@@ -137,6 +138,7 @@
 		ECC78C98676C2B9D25949568 /* MainAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAppView.swift; sourceTree = "<group>"; };
 		EF9314DE867D53B5B0A0ECFF /* RoundTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundTripView.swift; sourceTree = "<group>"; };
 		FD23266579A5E70C6431432A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FD4222EB3761EDC9E727959D /* zh_original.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = zh_original.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +218,7 @@
 				0FE85AFEDC10DA6903391B88 /* mixed_tech.wav */,
 				18FCA8FDFAE9556F9C7D2F27 /* references.json */,
 				680A90EA956B09AB5319F603 /* zh_meeting.wav */,
+				FD4222EB3761EDC9E727959D /* zh_original.wav */,
 				12AF210449E2B6238AEDB5CB /* zh_tech.wav */,
 			);
 			path = benchmark;
@@ -429,6 +432,7 @@
 				C7AC46CB2C56C721F7E51364 /* models in Resources */,
 				7B237A69698E5A5BF9A68251 /* references.json in Resources */,
 				4F986A29928D412BC804F43B /* zh_meeting.wav in Resources */,
+				2E1361E94061DB3A1549348E /* zh_original.wav in Resources */,
 				4DC73CA1A4EE33156AC101F9 /* zh_tech.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
