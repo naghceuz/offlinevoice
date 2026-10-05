@@ -32,8 +32,10 @@ final class HeadlessTranscriptionTests: XCTestCase {
                 channel[frame] = channelIndex == 0 ? 0.25 : -0.10
             }
         }
-        let file = try AVAudioFile(forWriting: url, settings: format.settings)
-        try file.write(from: buffer)
+        try autoreleasepool {
+            let file = try AVAudioFile(forWriting: url, settings: format.settings)
+            try file.write(from: buffer)
+        }
 
         let samples = try HeadlessAudioDecoder.decode(url)
 
