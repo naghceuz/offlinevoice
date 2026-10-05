@@ -47,9 +47,9 @@ enum HeadlessAudioDecoder {
 
         var suppliedInput = false
         var conversionError: NSError?
-        converter.convert(to: output, error: &conversionError) { _, status in
+        let conversionStatus = converter.convert(to: output, error: &conversionError) { _, status in
             if suppliedInput {
-                status.pointee = .noDataNow
+                status.pointee = .endOfStream
                 return nil
             }
             suppliedInput = true
@@ -57,6 +57,9 @@ enum HeadlessAudioDecoder {
             return input
         }
         if let conversionError { throw conversionError }
+        guard conversionStatus != .error else {
+            throw error("Audio conversion failed for \(url.lastPathComponent).")
+        }
         guard let channel = output.floatChannelData?[0] else {
             throw error("Converted audio contains no samples.")
         }
