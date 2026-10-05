@@ -1,0 +1,29 @@
+name: Cloud macOS tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Swift tests on Apple Silicon
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Run unit tests
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project OfflineVoice.xcodeproj \
+            -scheme OfflineVoice \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            test
