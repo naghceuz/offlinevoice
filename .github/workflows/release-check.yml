@@ -1,0 +1,119 @@
+name: Release package check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-release:
+    name: Check v0.5.0 on cloud Mac
+    runs-on: macos-14
+    timeout-minutes: 15
+
+    env:
+      RELEASE_TAG: v0.5.0
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check cloud Mac environment
+        run: |
+          set -euo pipefail
+          sw_vers
+          uname -m
+          test "$(uname -m)" = "arm64"
+
+      - name: Download release and checksum
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/release-check"
+          cd "$RUNNER_TEMP/release-check"
+
+          base="https://github.com/$REPOSITORY/releases/download/$RELEASE_TAG"
+
+          curl --fail --location --retry 3 \
+            --connect-timeout 30 --max-time 300 \
+            "$base/OfflineVoice-mac.dmg" \
+            -o OfflineVoice-mac.dmg
+
+          curl --fail --location --retry 3 \
+            --connect-timeout 30 --max-time 60 \
+            "$base/OfflineVoice-mac.dmg.sha256" \
+            -o OfflineVoice-mac.dmg.sha256
+
+          ls -lh OfflineVoice-mac.dmg
+          shasum -a 256 -c OfflineVoice-mac.dmg.sha256
+
+      - name: Verify disk image and notarization ticket
+        run: |
+          set -euo pipefail
+          dmg="$RUNNER_TEMP/release-check/OfflineVoice-mac.dmg"
+          hdiutil verify "$dmg"
+          xcrun stapler validate "$dmg"
+
+      - name: Mount disk image
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/offlinevoice-mount"
+          hdiutil attach \
+            "$RUNNER_TEMP/release-check/OfflineVoice-mac.dmg" \
+            -readonly -nobrowse \
+            -mountpoint "$RUNNER_TEMP/offlinevoice-mount"
+
+      - name: Verify app signature and Gatekeeper
+        run: |
+          set -euo pipefail
+          app="$RUNNER_TEMP/offlinevoice-mount/OfflineVoice.app"
+          test -d "$app"
+
+          codesign --verify --deep --strict --verbose=2 "$app"
+          spctl --assess --type execute --verbose=2 "$app"
+
+          version=$(/usr/libexec/PlistBuddy \
+            -c "Print :CFBundleShortVersionString" \
+            "$app/Contents/Info.plist")
+
+          echo "App version: $version"
+          test "$version" = "${RELEASE_TAG#v}"
+
+      - name: Verify bundled speech model
+        run: |
+          set -euo pipefail
+          models="$RUNNER_TEMP/offlinevoice-mount/OfflineVoice.app/Contents/Resources/models/sense-voice"
+          cd "$models"
+
+          test -s model.int8.onnx
+          test -s tokens.txt
+
+          echo "c71f0ce00bec95b07744e116345e33d8cbbe08cef896382cf907bf4b51a2cd51  model.int8.onnx" \
+            | shasum -a 256 -c -
+
+          echo "f449eb28dc567533d7fa59be34e2abca8784f771850c78a47fb731a31429a1dc  tokens.txt" \
+            | shasum -a 256 -c -
+
+      - name: Write result summary
+        run: |
+          {
+            echo "## OfflineVoice v0.5.0 package checks passed"
+            echo ""
+            echo "- Download and SHA-256 checksum passed."
+            echo "- Disk image verification passed."
+            echo "- Stapled notarization ticket validated."
+            echo "- App signature and Gatekeeper assessment passed."
+            echo "- App version and bundled model hashes matched."
+            echo ""
+            echo "Speech recognition accuracy, microphone, hotkey and text insertion were NOT tested."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Unmount disk image
+        if: always()
+        run: |
+          if mount | grep -Fq "$RUNNER_TEMP/offlinevoice-mount"; then
+            hdiutil detach "$RUNNER_TEMP/offlinevoice-mount"
+          fi
