@@ -18,6 +18,12 @@ class SpeechAcceptanceMetricTests(unittest.TestCase):
 
         self.assertGreater(score, 0)
 
+    def test_transcription_output_rejects_extra_stdout_lines(self):
+        output = '{"text":"hello","durationMilliseconds":42}\nunexpected output\n'
+
+        with self.assertRaises(ValueError):
+            speech_acceptance.parse_transcription_output(output)
+
 
 if __name__ == "__main__":
     unittest.main()
