@@ -3,6 +3,15 @@ import XCTest
 @testable import OfflineVoice
 
 final class HeadlessTranscriptionTests: XCTestCase {
+    private actor CapturingEngine: ASREngine {
+        private(set) var receivedSampleCount = 0
+
+        func transcribe(_ samples: [Float]) async throws -> String {
+            receivedSampleCount = samples.count
+            return "我想试着用一用"
+        }
+    }
+
     func testTranscribeFileFlagParsesAudioPath() throws {
         let command = try XCTUnwrap(HeadlessTranscriptionCommand.parse(arguments: [
             "OfflineVoice",
@@ -14,21 +23,48 @@ final class HeadlessTranscriptionTests: XCTestCase {
     }
 
     func testAudioDecoderResamplesStereoWavToSixteenKilohertzMono() throws {
-        let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("headless-audio-\(UUID().uuidString).wav")
+        let url = try makeWav(sampleRate: 8_000, channels: 2, frames: 800)
         defer { try? FileManager.default.removeItem(at: url) }
 
+        let samples = try HeadlessAudioDecoder.decode(url)
+
+        // AVAudioConverter may trim a short filter warm-up at the beginning.
+        XCTAssertEqual(samples.count, 1_600, accuracy: 64)
+        XCTAssertGreaterThan(samples.map(abs).max() ?? 0, 0.01)
+    }
+
+    func testRunnerTranscribesDecodedAudioAndReturnsResult() async throws {
+        let url = try makeWav(sampleRate: 16_000, channels: 1, frames: 1_600)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let command = HeadlessTranscriptionCommand(audioURL: url)
+        let engine = CapturingEngine()
+
+        let result = try await HeadlessTranscriptionRunner.run(command, engine: engine)
+        let receivedSampleCount = await engine.receivedSampleCount
+
+        XCTAssertEqual(result.text, "我想试着用一用")
+        XCTAssertGreaterThan(receivedSampleCount, 1_500)
+        XCTAssertGreaterThanOrEqual(result.durationMilliseconds, 0)
+    }
+
+    private func makeWav(
+        sampleRate: Double,
+        channels: AVAudioChannelCount,
+        frames: AVAudioFrameCount
+    ) throws -> URL {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("headless-audio-\(UUID().uuidString).wav")
         let format = try XCTUnwrap(AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
-            sampleRate: 8_000,
-            channels: 2,
+            sampleRate: sampleRate,
+            channels: channels,
             interleaved: false
         ))
-        let buffer = try XCTUnwrap(AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 800))
-        buffer.frameLength = 800
-        for channelIndex in 0..<2 {
+        let buffer = try XCTUnwrap(AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frames))
+        buffer.frameLength = frames
+        for channelIndex in 0..<Int(channels) {
             let channel = try XCTUnwrap(buffer.floatChannelData?[channelIndex])
-            for frame in 0..<800 {
+            for frame in 0..<Int(frames) {
                 channel[frame] = channelIndex == 0 ? 0.25 : -0.10
             }
         }
@@ -36,11 +72,6 @@ final class HeadlessTranscriptionTests: XCTestCase {
             let file = try AVAudioFile(forWriting: url, settings: format.settings)
             try file.write(from: buffer)
         }
-
-        let samples = try HeadlessAudioDecoder.decode(url)
-
-        // AVAudioConverter may trim a short filter warm-up at the beginning.
-        XCTAssertEqual(samples.count, 1_600, accuracy: 64)
-        XCTAssertGreaterThan(samples.map(abs).max() ?? 0, 0.01)
+        return url
     }
 }
