@@ -140,7 +140,13 @@ struct OnboardingView: View {
     @EnvironmentObject private var settingsStore: SettingsStore
     @State private var step = 0
 
-    private let titles = ["Welcome", "Permissions", "Hotkey", "Local engine", "Ready"]
+    private let titles = ["Welcome", "Microphone", "Accessibility", "Hotkey", "Ready"]
+
+    private var microphoneGranted: Bool { appState.permissions.microphone == .authorized }
+    private var microphoneDenied: Bool {
+        appState.permissions.microphone == .denied || appState.permissions.microphone == .restricted
+    }
+    private var accessibilityGranted: Bool { appState.permissions.accessibilityTrusted }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -158,9 +164,9 @@ struct OnboardingView: View {
                 Group {
                     switch step {
                     case 0: welcome
-                    case 1: permissions
-                    case 2: hotkey
-                    case 3: engine
+                    case 1: microphone
+                    case 2: accessibility
+                    case 3: hotkey
                     default: finish
                     }
                 }
@@ -182,10 +188,37 @@ struct OnboardingView: View {
                 .keyboardShortcut(.defaultAction)
                 .buttonStyle(.borderedProminent)
                 .tint(Brand.yellow)
+                // The two permission steps cannot be skipped: without them the
+                // app does not work, and a "skip" is what every user would pick.
+                .disabled((step == 1 && !microphoneGranted) || (step == 2 && !accessibilityGranted))
             }
             .padding(28)
         }
         .frame(minWidth: 860, minHeight: 600)
+        // Each permission screen asks macOS the moment it appears, so the user
+        // only ever answers the system dialog — one at a time, in order.
+        .onChange(of: step) { newStep in requestForStep(newStep) }
+        .onAppear { requestForStep(step) }
+        // …and moves on by itself once the permission is in place, so the normal
+        // path needs no clicks inside this window at all.
+        .onChange(of: microphoneGranted) { granted in advance(from: 1, when: granted) }
+        .onChange(of: accessibilityGranted) { granted in advance(from: 2, when: granted) }
+    }
+
+    private func requestForStep(_ s: Int) {
+        switch s {
+        case 1 where !microphoneGranted && !microphoneDenied: appState.requestMicrophoneAccess()
+        case 2 where !accessibilityGranted: appState.requestAccessibilityAccess()
+        default: break
+        }
+    }
+
+    private func advance(from permissionStep: Int, when granted: Bool) {
+        guard granted, step == permissionStep else { return }
+        // Leave the green check on screen for a moment so the change registers.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            if step == permissionStep { step += 1 }
+        }
     }
 
     private var welcome: some View {
@@ -202,35 +235,70 @@ struct OnboardingView: View {
                 StatusPill(text: "No subscription", systemImage: "nosign", color: .green)
                 StatusPill(text: "Works across apps", systemImage: "rectangle.3.group", color: .blue)
             }
+            Text("Next, macOS will ask for two permissions, one after the other: the microphone, then Accessibility. Both are needed; each takes one click.")
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(48)
     }
 
-    private var permissions: some View {
+    private var microphone: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Allow the basics")
+            Text("Let OfflineVoice hear you")
                 .font(.largeTitle.weight(.bold))
-            Text("Microphone captures your voice. Accessibility lets OfflineVoice listen for the global hotkey and paste into the active app.")
-                .foregroundStyle(.secondary)
+            Text("Audio is captured only while you hold the hotkey, is transcribed on this Mac, and is never stored or uploaded. Click Allow in the macOS prompt.")
                 .font(.title3)
+                .foregroundStyle(.secondary)
             PermissionRow(
                 title: "Microphone",
-                detail: "Required for voice capture.",
-                allowed: appState.permissions.microphone == .authorized,
-                actionTitle: "Open Microphone Settings",
-                action: appState.openMicrophoneSettings
+                detail: microphoneGranted ? "Voice capture is enabled."
+                    : microphoneDenied ? "Microphone access was declined. Turn it on in System Settings and this screen continues by itself."
+                    : "Waiting for your answer in the macOS prompt…",
+                allowed: microphoneGranted,
+                actionTitle: nil,
+                action: {}
             )
-            PermissionRow(
-                title: "Accessibility",
-                detail: "Required for global shortcuts and auto paste.",
-                allowed: appState.permissions.accessibilityTrusted,
-                actionTitle: "Open Accessibility Settings",
-                action: appState.openAccessibilitySettings
-            )
-            Button("Refresh permission status") { appState.refreshHealth() }
+            if microphoneDenied {
+                settingsFallback(title: "Open Microphone Settings", action: appState.openMicrophoneSettings)
+            }
         }
         .padding(48)
+    }
+
+    private var accessibility: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Let it work in every app")
+                .font(.largeTitle.weight(.bold))
+            Text("Accessibility access lets OfflineVoice notice the hotkey while another app is in front, and paste the finished text at your cursor. In the macOS prompt choose Open System Settings, turn on OfflineVoice, then come back here.")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+            PermissionRow(
+                title: "Accessibility",
+                detail: accessibilityGranted ? "Global hotkey and auto-paste are enabled."
+                    : "Waiting for the switch in System Settings ▸ Privacy & Security ▸ Accessibility…",
+                allowed: accessibilityGranted,
+                actionTitle: nil,
+                action: {}
+            )
+            if !accessibilityGranted {
+                settingsFallback(title: "Open Accessibility Settings", action: appState.openAccessibilitySettings)
+            }
+        }
+        .padding(48)
+    }
+
+    /// Shown only when the system prompt is gone (declined or dismissed), since
+    /// macOS will not show it a second time: the one remaining way forward is
+    /// System Settings. Status refreshes on its own when the app comes back.
+    private func settingsFallback(title: String, action: @escaping () -> Void) -> some View {
+        HStack(spacing: 12) {
+            Button(title, action: action)
+                .buttonStyle(.borderedProminent)
+                .tint(Brand.yellow)
+            Text("Closed the prompt? Open the setting directly — this screen moves on as soon as it is enabled.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+        }
     }
 
     private var hotkey: some View {
@@ -251,24 +319,6 @@ struct OnboardingView: View {
         .padding(48)
     }
 
-    private var engine: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Text("Local engine")
-                .font(.largeTitle.weight(.bold))
-            Text("Transcription runs entirely on your Mac. The default Speed mode uses a multilingual model bundled with the app: it detects Chinese, English, Japanese, Korean and Cantonese by itself — including mixed Chinese and English in one sentence.")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-            StatusPill(
-                text: appState.isModelReady ? "Model ready" : "Preparing model",
-                systemImage: appState.isModelReady ? "checkmark.circle.fill" : "arrow.down.circle",
-                color: appState.isModelReady ? .green : Brand.yellow
-            )
-            Text("Want to try Whisper for English or technical speech, or Apple's own recognizer for your system language only? Switch modes any time in Speed & Accuracy.")
-                .foregroundStyle(.secondary)
-        }
-        .padding(48)
-    }
-
     private var finish: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text("Try it anywhere")
@@ -276,7 +326,16 @@ struct OnboardingView: View {
             Text("Open any text field, hold \(settingsStore.settings.primaryShortcut.displayName), speak, and release. The finished text is pasted into the focused app.")
                 .font(.title3)
                 .foregroundStyle(.secondary)
-            StatusPill(text: "Audio and text stay on your Mac", systemImage: "lock.shield", color: Brand.yellow)
+            Text("Transcription runs entirely on your Mac with a multilingual model bundled in the app: it detects Chinese, English, Japanese, Korean and Cantonese by itself, mixed Chinese and English included. Whisper and Apple's own recognizer are available in Speed & Accuracy.")
+                .foregroundStyle(.secondary)
+            HStack(spacing: 12) {
+                StatusPill(
+                    text: appState.isModelReady ? "Model ready" : "Preparing model",
+                    systemImage: appState.isModelReady ? "checkmark.circle.fill" : "arrow.down.circle",
+                    color: appState.isModelReady ? .green : Brand.yellow
+                )
+                StatusPill(text: "Audio and text stay on your Mac", systemImage: "lock.shield", color: Brand.yellow)
+            }
         }
         .padding(48)
     }
@@ -286,7 +345,9 @@ struct PermissionRow: View {
     let title: String
     let detail: String
     let allowed: Bool
-    let actionTitle: String
+    /// nil hides the trailing button (the onboarding screens put one primary
+    /// action under the row instead of a small button inside it).
+    let actionTitle: String?
     let action: () -> Void
 
     var body: some View {
@@ -299,7 +360,9 @@ struct PermissionRow: View {
                 Text(detail).foregroundStyle(.secondary)
             }
             Spacer()
-            Button(actionTitle, action: action)
+            if let actionTitle {
+                Button(actionTitle, action: action)
+            }
         }
         .padding(18)
         .background(.regularMaterial)

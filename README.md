@@ -186,14 +186,13 @@ Then verify:
 
 OfflineVoice is a Dock-visible Mac app with an optional menu-bar status icon.
 
-Users should:
+Nothing is requested at launch. Onboarding asks for the two permissions one after the other, each on its own screen, and moves on by itself once a permission is granted; neither can be skipped because the app does not work without them.
 
 1. Open `OfflineVoice.app`.
-2. Complete the onboarding window.
-3. Approve Microphone access when macOS asks.
-4. Open Accessibility settings from onboarding or Home if shown, then enable OfflineVoice.
-5. Confirm the default shortcut or record a new shortcut in Settings.
-6. Put the cursor in any text field, hold the shortcut, speak, and release.
+2. **Microphone** screen: the macOS prompt appears on its own — click *Allow*.
+3. **Accessibility** screen: the macOS prompt appears on its own — choose *Open System Settings*, turn OfflineVoice on, and come back; the screen continues automatically. (If a prompt was dismissed, the screen offers an *Open … Settings* button, since macOS only shows each prompt once.)
+4. Confirm the default shortcut or record a new one.
+5. Put the cursor in any text field, hold the shortcut, speak, and release.
 
 Microphone access is required for transcription (Native mode additionally asks for Speech Recognition access). Accessibility is required for the global push-to-talk key and automatic paste.
 

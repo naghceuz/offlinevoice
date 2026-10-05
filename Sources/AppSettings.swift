@@ -182,7 +182,6 @@ struct KeyboardShortcut: Codable, Equatable {
 struct PermissionSnapshot: Equatable {
     var microphone: AVAuthorizationStatus
     var accessibilityTrusted: Bool
-    var inputMonitoringRequired: Bool = false
 }
 
 struct AppSettings: Codable, Equatable {

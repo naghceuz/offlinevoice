@@ -44,7 +44,7 @@ struct HomeView: View {
                             .font(.headline)
                         Text("Dictation still works — your finished text is copied to the clipboard, so press ⌘V to paste it. Grant Accessibility to have OfflineVoice paste automatically.")
                             .foregroundStyle(.secondary)
-                        Button("Open Accessibility Settings", action: appState.openAccessibilitySettings)
+                        Button("Allow Accessibility", action: appState.requestAccessibilityAccess)
                             .buttonStyle(.borderedProminent)
                             .tint(Brand.yellow)
                             .padding(.top, 4)
@@ -112,26 +112,24 @@ struct HomeView: View {
 
             SectionCard("Permissions", subtitle: "OfflineVoice needs macOS permission for voice capture and app-wide paste.") {
                 VStack(spacing: 12) {
+                    // Not yet asked → ask right here (one system dialog, in
+                    // context). Denied → the only fix is System Settings.
                     PermissionRow(
                         title: "Microphone",
                         detail: microphoneDetail,
                         allowed: appState.permissions.microphone == .authorized,
-                        actionTitle: "Open Settings",
-                        action: appState.openMicrophoneSettings
+                        actionTitle: appState.permissions.microphone == .authorized ? nil
+                            : appState.permissions.microphone == .notDetermined ? "Allow" : "Open Settings",
+                        action: appState.permissions.microphone == .notDetermined
+                            ? appState.requestMicrophoneAccess : appState.openMicrophoneSettings
                     )
                     PermissionRow(
                         title: "Accessibility",
                         detail: appState.permissions.accessibilityTrusted ? "Global shortcut and auto paste are enabled." : "Enable OfflineVoice to use the hotkey outside this window.",
                         allowed: appState.permissions.accessibilityTrusted,
-                        actionTitle: "Open Settings",
-                        action: appState.openAccessibilitySettings
+                        actionTitle: appState.permissions.accessibilityTrusted ? nil : "Allow",
+                        action: appState.requestAccessibilityAccess
                     )
-                    HStack {
-                        Label("Input Monitoring", systemImage: "keyboard")
-                        Spacer()
-                        Text("Not required by current v0.2 pipeline")
-                            .foregroundStyle(.secondary)
-                    }
                 }
             }
 
@@ -174,7 +172,7 @@ struct HomeView: View {
         case .denied, .restricted:
             return "Enable microphone access in System Settings."
         case .notDetermined:
-            return "macOS will ask the first time OfflineVoice records."
+            return "Not asked yet. Press Allow, or macOS will ask the first time you record."
         @unknown default:
             return "Permission status is unknown."
         }

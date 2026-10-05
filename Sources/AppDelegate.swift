@@ -15,6 +15,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var mainWindow: NSWindow?
     private var healthTimer: Timer?
     private var didPromptAccessibilityForPaste = false
+    private var hotkeyStarted = false
     private var cancellables = Set<AnyCancellable>()
 
     private enum Tag: Int { case status = 1, shortcut = 2, accessibility = 3, mic = 4 }
@@ -56,6 +57,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         appState.openAccessibilitySettings = { [weak self] in self?.openAccessibilitySettings() }
         appState.openMicrophoneSettings = { [weak self] in self?.openMicSettings() }
+        appState.requestMicrophoneAccess = { [weak self] in self?.requestMicAccess() }
+        appState.requestAccessibilityAccess = { [weak self] in _ = self?.requestAccessibilityIfNeeded() }
         appState.startDictation = { [weak self] in self?.pipeline.startRecording() }
         appState.stopDictation = { [weak self] in self?.pipeline.finish() }
         appState.refreshHealth = { [weak self] in self?.refreshHealth() }
@@ -86,10 +89,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         render(.idle)
 
         Log.write("launch: ax=\(AXIsProcessTrusted()) micStatus=\(AVCaptureDevice.authorizationStatus(for: .audio).rawValue)")
-        requestMicAccess()
-        requestAccessibilityIfNeeded()
-        hotkey.start()
-        Log.write("hotkey monitor started shortcut=\(settingsStore.settings.primaryShortcut.displayName)")
+        // Deliberately no permission requests here. A fresh install used to get
+        // three system dialogs at once (microphone, Accessibility, and Input
+        // Monitoring from the global key monitor) stacked on top of the
+        // onboarding window. Each one is now triggered by its own button in
+        // onboarding / Home, one at a time, with an explanation next to it.
+        startHotkeyIfAllowed()
         pipeline.prewarm()
 
         refreshHealth()
@@ -106,6 +111,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Log.write("launch: --benchmark flag present")
             Benchmark.run()
         }
+    }
+
+    /// Coming back from System Settings (after flipping the Accessibility or
+    /// Microphone switch) should reflect immediately, not on the next 3 s tick.
+    func applicationDidBecomeActive(_ notification: Notification) {
+        refreshHealth()
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -251,8 +262,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         showMainWindow()
     }
 
+    /// Starts the global hotkey monitor once it can do so without surprising
+    /// the user. Registering a global key monitor while the app is not trusted
+    /// for Accessibility makes macOS show the Input Monitoring dialog, so on a
+    /// first run we wait until Accessibility is granted or onboarding is done
+    /// (at which point Home has already explained what is missing). Called at
+    /// launch and from the 3 s health timer, so a grant made during onboarding
+    /// takes effect within seconds, without a restart.
+    private func startHotkeyIfAllowed() {
+        guard !hotkeyStarted else { return }
+        guard AXIsProcessTrusted() || settingsStore.settings.hasCompletedOnboarding else { return }
+        hotkeyStarted = true
+        hotkey.start()
+        Log.write("hotkey monitor started shortcut=\(settingsStore.settings.primaryShortcut.displayName) ax=\(AXIsProcessTrusted())")
+    }
+
     private func refreshHealth() {
         appState.refreshPermissionSnapshot()
+        startHotkeyIfAllowed()
         let axTrusted = AXIsProcessTrusted()
         let micGranted = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
         if axTrusted { appState.pasteBlockedByAccessibility = false }

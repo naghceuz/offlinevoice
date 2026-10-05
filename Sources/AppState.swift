@@ -23,6 +23,10 @@ final class AppState: ObservableObject {
 
     var openAccessibilitySettings: () -> Void = {}
     var openMicrophoneSettings: () -> Void = {}
+    /// Trigger the system permission dialogs on demand (one button each in
+    /// onboarding / Home), instead of all at once on launch.
+    var requestMicrophoneAccess: () -> Void = {}
+    var requestAccessibilityAccess: () -> Void = {}
     var startDictation: () -> Void = {}
     var stopDictation: () -> Void = {}
     var refreshHealth: () -> Void = {}
