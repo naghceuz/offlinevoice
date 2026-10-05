@@ -71,3 +71,25 @@ enum HeadlessAudioDecoder {
         )
     }
 }
+
+struct HeadlessTranscriptionResult: Codable, Equatable {
+    let text: String
+    let durationMilliseconds: Int
+}
+
+enum HeadlessTranscriptionRunner {
+    static func run(
+        _ command: HeadlessTranscriptionCommand,
+        engine: any ASREngine
+    ) async throws -> HeadlessTranscriptionResult {
+        let samples = try HeadlessAudioDecoder.decode(command.audioURL)
+        let start = CFAbsoluteTimeGetCurrent()
+        try await engine.prepare()
+        let text = try await engine.transcribe(samples)
+        let elapsed = CFAbsoluteTimeGetCurrent() - start
+        return HeadlessTranscriptionResult(
+            text: text,
+            durationMilliseconds: max(0, Int(elapsed * 1_000))
+        )
+    }
+}
