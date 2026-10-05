@@ -1,4 +1,4 @@
-# OfflineVoice v0.5.1
+# OfflineVoice v0.5.2
 
 **The fastest local dictation for Mac.** Private, offline voice input — now in your language, whichever one you're speaking.
 
@@ -10,6 +10,23 @@ the text is pasted at your cursor. Because it runs entirely on your Mac, it's fa
 ⬇️ **Download:** [OfflineVoice-mac.dmg](https://www.offlinevoice.ai/api/download)
 
 ---
+
+## What's new in 0.5.2
+
+**Press, talk — the first word is there.** On external microphones (an Apple Studio
+Display, a USB or Bluetooth mic) opening the mic can take half a second, and that
+half second used to swallow the start of what you said. OfflineVoice now keeps the
+microphone open for ten seconds after each dictation, so the next press captures
+instantly — and even includes the half second *before* you pressed. On the first
+press after a pause the floating indicator shows a mic icon until audio is really
+flowing, then switches to the waveform: wait for the waveform, nothing is lost.
+
+**A tap pastes nothing.** Holding the key without speaking used to paste a stray
+word ("The.", "你。"), because speech models hallucinate on room noise. A small
+on-device voice-activity model now checks every capture; no speech, no text.
+
+**Switching microphones mid-sentence keeps recording.** Plugging a display in or out,
+or changing the input device, no longer turns the rest of a dictation into silence.
 
 ## What's new in 0.5.1
 

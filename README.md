@@ -198,7 +198,7 @@ Microphone access is required for transcription (Native mode additionally asks f
 
 ## App Settings
 
-OfflineVoice v0.5.1 stores user settings at:
+OfflineVoice v0.5.2 stores user settings at:
 
 ```text
 ~/.config/offlinevoice/config.json
@@ -252,7 +252,7 @@ setting neither falls back to the ad-hoc build.
 ## Temporary Choices and Follow-Ups
 
 - The public download is a GitHub Release asset; the website only counts and redirects.
-- Translate and Ask Anything are visible as future shortcut modes but disabled in v0.5.1.
+- Translate and Ask Anything are visible as future shortcut modes but disabled in v0.5.2.
 - Launch at login uses `SMAppService`.
 - Switching recognition mode from the UI is persisted and reloads the engine in place.
 - The website product preview is a designed placeholder until real screenshots or a screen recording are captured.
